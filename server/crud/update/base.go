@@ -1,4 +1,4 @@
-package get
+package update
 
 import (
 	"context"
@@ -8,18 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Count how many users there are
-func CountAll(DB map[string]*mongo.Collection, ctx context.Context) int64 {
-	count, err := DB["users"].CountDocuments(ctx, bson.M{"status": true})
-
-	if err != nil {
-		return 0
-	} else {
-		return count
-	}
-}
-
-// Update visit-count for whole app (each link open)
+// Увеличить кол-во посещений приложения, за каждый клик по ссылке
 func Visit(DB map[string]*mongo.Collection, ctx context.Context) {
 	var data bson.M
 	opts := options.FindOne().SetProjection(bson.M{"count": 1})
@@ -28,4 +17,11 @@ func Visit(DB map[string]*mongo.Collection, ctx context.Context) {
 	DB["visits"].UpdateOne(ctx, bson.M{"_id": 1}, bson.D{
 		{Key: "$set", Value: bson.D{{Key: "count", Value: data["count"].(int32) + 1}}},
 	})
+}
+
+// Обнулить онлайн всем пользователям
+func ResetOnlineForUsers(props Props) {
+	props.DB["users"].UpdateMany(props.Ctx, bson.M{"online": true},
+		bson.D{{Key: "$set", Value: bson.D{{Key: "online", Value: false}}}},
+	)
 }

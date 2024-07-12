@@ -8,12 +8,12 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"wifer/server/crud/update"
 	"wifer/server/middlewares"
 
 	chi "github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var (
@@ -24,7 +24,8 @@ var (
 
 // init is invoked before main()
 func init() {
-	resetOnlineForUsers()
+	update.ResetOnlineForUsers(props)
+	setup_middlewares()
 }
 
 func get_env() {
@@ -69,16 +70,9 @@ func get_config() *Config {
 	}
 }
 
-// set online field to false for all users
-func resetOnlineForUsers() {
-	DB["users"].UpdateMany(ctx, bson.M{"online": true},
-		bson.D{{Key: "$set", Value: bson.D{{Key: "online", Value: false}}}},
-	)
-}
-
 func setup_middlewares() {
 	r.Use(
-		middleware.Logger,
+		// middleware.Logger,
 		middleware.RedirectSlashes,
 		middleware.Recoverer,
 		middleware.RealIP,

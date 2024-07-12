@@ -12,7 +12,7 @@ type Props = structs.Props
 type Config = structs.Config
 
 // check if user loged in
-func AuthMiddleware(props Props) func(next http.Handler) http.Handler {
+func Auth(props Props) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if _, e := r.Cookie("auth"); e == nil {

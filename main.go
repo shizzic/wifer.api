@@ -17,7 +17,6 @@ type Config = structs.Config
 type Email = structs.Email
 
 func main() {
-	setup_middlewares()
 	routes.Declare(props)
 	run()
 }

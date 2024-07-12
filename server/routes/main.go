@@ -1,14 +1,20 @@
 package routes
 
+// fmt.Printf("%+v", data)
+
 import (
-	"wifer/server/routes/other"
-	"wifer/server/routes/user"
 	"wifer/server/structs"
+
+	unrolled "github.com/unrolled/render"
 )
 
 type Props = structs.Props
+type Auth = structs.Auth
+type User = structs.User
+
+var render = unrolled.New()
 
 func Declare(props Props) {
-	user.Declare(props)
-	other.Declare(props)
+	user(props)
+	other(props)
 }
