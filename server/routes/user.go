@@ -81,6 +81,18 @@ func user(props *Props) {
 			})
 		})
 
+		props.R.Put("/change", func(w http.ResponseWriter, r *http.Request) {
+			var data User
+			decoder.Decode(r, &data)
+			id := get.UserID(w, r, props)
+
+			if err := update.Change(props, r, w, &data, id); err != nil {
+				render.JSON(w, http.StatusBadRequest, map[string]string{"err": err.Error()})
+			} else {
+				render.JSON(w, http.StatusOK, map[string]string{})
+			}
+		})
+
 		props.R.Put("/logout", func(w http.ResponseWriter, r *http.Request) {
 			id := get.UserID(w, r, props)
 			update.Logout(w, r, props, id)

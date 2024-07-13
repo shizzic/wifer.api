@@ -86,3 +86,9 @@ type Signin struct {
 	Method string `json:"method" query:"method"`
 	Api    bool   `json:"api" query:"api"`
 }
+
+// Набор данных для перевода
+type Translate struct {
+	Text string `json:"text" query:"text"`
+	Lang string `json:"lang" query:"lang"`
+}

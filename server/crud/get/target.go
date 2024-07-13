@@ -2,6 +2,7 @@ package get
 
 import (
 	"net/http"
+	"wifer/server/crud/create"
 	"wifer/server/structs"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,7 +18,7 @@ func TargetProfileActions(target int, w http.ResponseWriter, r *http.Request, pr
 	var data Target
 
 	if id > 0 && id != target && target > 0 {
-		// AddView(idInt, target, c)
+		create.ProfileView(props, id, target)
 
 		if err, like := likes(id, target, props); !err {
 			data.Like = like
