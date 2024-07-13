@@ -1,10 +1,16 @@
 package lang
 
-import gt "github.com/bas24/googletranslatefree"
+import (
+	"wifer/server/structs"
+
+	gt "github.com/bas24/googletranslatefree"
+)
+
+type Translate = structs.Translate
 
 // Перевод строки
-func Translate(text, lang string) (string, error) {
-	result, err := gt.Translate(text, "auto", lang)
+func TranslateText(props *Translate) (string, error) {
+	result, err := gt.Translate(props.Text, "auto", props.Lang)
 
 	if err != nil {
 		return "", err

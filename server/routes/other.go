@@ -27,7 +27,7 @@ func other(props *Props) {
 	props.R.Put("/translate", func(w http.ResponseWriter, r *http.Request) {
 		var data Translate
 		decoder.Decode(r, &data)
-		text, err := lang.Translate(data.Text, data.Lang)
+		text, err := lang.TranslateText(&data)
 
 		if err != nil {
 			render.JSON(w, http.StatusBadRequest, map[string]string{"error": "0"})
