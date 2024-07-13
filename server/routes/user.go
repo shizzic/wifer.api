@@ -12,7 +12,7 @@ import (
 	decoder "github.com/jesse0michael/go-request"
 )
 
-func user(props Props) {
+func user(props *Props) {
 	props.R.Group(func(r chi.Router) {
 		props.R.Get("/profile", func(w http.ResponseWriter, r *http.Request) {
 			var data User

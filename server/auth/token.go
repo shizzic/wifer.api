@@ -13,7 +13,7 @@ const letters = "1234567890_-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 type Props = structs.Props
 
 // Дешифровать токен из куки, 30 ms speed average
-func DecryptToken(props Props, token string, w http.ResponseWriter) (username string) {
+func DecryptToken(props *Props, token string, w http.ResponseWriter) (username string) {
 	key := 0
 	minus := 0
 
@@ -67,7 +67,7 @@ func EncryptToken(username string) (token string) {
 }
 
 // Создать или очистеть куки для аутентификации
-func MakeCookies(props Props, id string, username string, time int, w http.ResponseWriter) {
+func MakeCookies(props *Props, id string, username string, time int, w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    EncryptToken(username),

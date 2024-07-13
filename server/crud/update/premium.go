@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func Premium(props Props, w http.ResponseWriter, r *http.Request, id int, user primitive.M) {
+func Premium(props *Props, w http.ResponseWriter, r *http.Request, id int, user primitive.M) {
 	// Если у пользователя был активирован премиум когда либо до и все еще не обнулен
 	if user["premium"].(int64) != 0 {
 		// Если премиум просрочился, обнуляю в бд и удаляю куку

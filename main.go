@@ -6,8 +6,8 @@ import (
 )
 
 var props = Props{
+	Conf: conf,
 	Ctx:  ctx,
-	Conf: *conf,
 	DB:   DB,
 	R:    r,
 }
@@ -17,6 +17,6 @@ type Config = structs.Config
 type Email = structs.Email
 
 func main() {
-	routes.Declare(props)
+	routes.Declare(&props)
 	run()
 }

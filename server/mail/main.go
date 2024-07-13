@@ -14,7 +14,7 @@ type Email = structs.Email
 type Props = structs.Props
 
 // Отправить код подтверждения пользователю в виде ссылки для валидации какого то действия
-func SendCode(props Props, to, code, id string) error {
+func SendCode(props *Props, to, code, id string) error {
 	server := mail.NewSMTPClient()
 	server.Host = props.Conf.EMAIL.HOST
 	server.Port = props.Conf.EMAIL.PORT
@@ -50,7 +50,7 @@ func SendCode(props Props, to, code, id string) error {
 	return nil
 }
 
-func ContactMe(props Props, name, sender, subject, message string) error {
+func ContactMe(props *Props, name, sender, subject, message string) error {
 	server := mail.NewSMTPClient()
 	server.Host = props.Conf.EMAIL.HOST
 	server.Port = props.Conf.EMAIL.PORT

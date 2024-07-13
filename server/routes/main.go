@@ -16,8 +16,8 @@ type Signin = structs.Signin
 
 var render = unrolled.New()
 
-func Declare(props Props) {
+func Declare(props *Props) {
 	user(props)
-	other(props)
 	location(props)
+	other(props)
 }

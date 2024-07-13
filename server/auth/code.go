@@ -24,7 +24,7 @@ func MakeCode() string {
 }
 
 // Проверить код для валидации
-func CheckCode(props Props, id int, code string, w http.ResponseWriter) error {
+func CheckCode(props *Props, id int, code string, w http.ResponseWriter) error {
 	if !isCode(code) {
 		return errors.New("0")
 	}

@@ -18,7 +18,7 @@ type Signin = structs.Signin
 var render = unrolled.New()
 
 // Получаем id пользователя из куки, для авторизации
-func UserID(w http.ResponseWriter, r *http.Request, props Props) (result int) {
+func UserID(w http.ResponseWriter, r *http.Request, props *Props) (result int) {
 	id, err := r.Cookie("id")
 	if err != nil {
 		render.JSON(w, http.StatusNotFound, map[string]string{"error": err.Error()})
@@ -29,7 +29,7 @@ func UserID(w http.ResponseWriter, r *http.Request, props Props) (result int) {
 }
 
 // Получаем весь профиль пользователя
-func Profile(id int, props Props) (bson.M, error) {
+func Profile(id int, props *Props) (bson.M, error) {
 	var user bson.M
 	opts := options.FindOne().SetProjection(bson.M{
 		"username":   1,
@@ -77,7 +77,7 @@ func UserEmailByApi(data Signin) (email string, err error) {
 }
 
 // Получаю пользователя и список айдишников юзеров, которые ему отписали (не прочитанные сообщения)
-func UserAndMessagedHimIds(props Props, w http.ResponseWriter, r *http.Request) (bson.M, []interface{}) {
+func UserAndMessagedHimIds(props *Props, w http.ResponseWriter, r *http.Request) (bson.M, []interface{}) {
 	id := UserID(w, r, props)
 
 	var user bson.M

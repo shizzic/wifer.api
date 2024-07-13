@@ -39,7 +39,7 @@ type Email struct {
 }
 
 type Props struct {
-	Conf Config
+	Conf *Config
 	Ctx  context.Context
 	DB   map[string]*mongo.Collection
 	R    *chi.Mux

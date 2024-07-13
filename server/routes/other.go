@@ -9,14 +9,14 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func other(props Props) {
+func other(props *Props) {
 	props.R.Get("/count", func(w http.ResponseWriter, r *http.Request) {
-		quantity := get.CountAll(props.DB, props.Ctx)
+		quantity := get.CountAll(props)
 		render.JSON(w, http.StatusOK, quantity)
 	})
 
 	props.R.Post("/visit", func(w http.ResponseWriter, r *http.Request) {
-		update.Visit(props.DB, props.Ctx)
+		update.Visit(props)
 	})
 
 	props.R.Group(func(r chi.Router) {

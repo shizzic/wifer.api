@@ -24,7 +24,7 @@ var (
 
 // init is invoked before main()
 func init() {
-	update.ResetOnlineForUsers(props)
+	update.ResetOnlineForUsers(&props)
 	setup_middlewares()
 }
 

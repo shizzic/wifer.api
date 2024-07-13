@@ -7,7 +7,7 @@ import (
 	decoder "github.com/jesse0michael/go-request"
 )
 
-func location(props Props) {
+func location(props *Props) {
 	props.R.Get("/country", func(w http.ResponseWriter, r *http.Request) {
 		countries := get.Countries(props)
 		render.JSON(w, http.StatusOK, countries)
