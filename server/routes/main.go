@@ -19,5 +19,6 @@ var render = unrolled.New()
 func Declare(props *Props) {
 	user(props)
 	location(props)
+	image(props)
 	other(props)
 }
