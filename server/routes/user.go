@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 	"wifer/server/auth"
+	"wifer/server/crud/create"
 	"wifer/server/crud/get"
 	"wifer/server/crud/update"
 	"wifer/server/middlewares"
@@ -17,7 +18,7 @@ func user(props Props) {
 			var data User
 			decoder.Decode(r, &data)
 
-			target := get.GetTarget(data.ID, w, r, props)
+			target := get.TargetProfileActions(data.ID, w, r, props)
 			if user, err := get.Profile(data.ID, props); err != nil {
 				render.JSON(w, http.StatusNotFound, map[string]string{"error": err.Error()})
 			} else {
@@ -26,27 +27,32 @@ func user(props Props) {
 		})
 
 		props.R.Post("/signin", func(w http.ResponseWriter, r *http.Request) {
-			// var data signin
-			// c.Bind(&data)
+			var data Signin
+			decoder.Decode(r, &data)
 
-			// var err error
-			// var id int
+			// если через api, тогда получаю почту и только затим впускаю/регаю
+			if data.Api {
+				email, err := get.UserEmailByApi(data)
 
-			// if data.Api {
-			// 	id, err = CheckApi(data, c)
-			// } else {
-			// 	id, err = Signin(data.Email, c, false)
-			// }
+				if err != nil {
+					render.JSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+				}
 
-			// if err != nil {
-			// 	c.JSON(400, gin.H{"error": err.Error()})
-			// } else {
-			// 	c.JSON(200, gin.H{"id": id})
-			// }
+				data.Email = email
+			}
+
+			id, err := create.Signin(props, w, data.Email, data.Api)
+
+			if err != nil {
+				render.JSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+			} else {
+				render.JSON(w, http.StatusOK, map[string]int{"id": id})
+			}
 		})
 
 		props.R.Post("/checkCode", func(w http.ResponseWriter, r *http.Request) {
-			data := &Auth{}
+			var data Auth
+			decoder.Decode(r, &data)
 
 			if err := auth.CheckCode(props, data.ID, data.Code, w); err != nil {
 				render.JSON(w, http.StatusUnauthorized, map[string]string{"error": err.Error()})
@@ -59,8 +65,25 @@ func user(props Props) {
 	props.R.Group(func(r chi.Router) {
 		r.Use(middlewares.Auth(props))
 
+		props.R.Get("/online", func(w http.ResponseWriter, r *http.Request) {
+			var data User
+			decoder.Decode(r, &data)
+			id := get.UserID(w, r, props)
+
+			update.ChangeLastOnline(props, data.Online, id)
+		})
+
+		props.R.Get("/getParamsAfterLogin", func(w http.ResponseWriter, r *http.Request) {
+			user, messages := get.UserAndMessagedHimIds(props, w, r)
+			render.JSON(w, http.StatusOK, map[string]interface{}{
+				"user":     user,
+				"messages": messages,
+			})
+		})
+
 		props.R.Put("/logout", func(w http.ResponseWriter, r *http.Request) {
-			update.Logout(w, r, props)
+			id := get.UserID(w, r, props)
+			update.Logout(w, r, props, id)
 		})
 	})
 }

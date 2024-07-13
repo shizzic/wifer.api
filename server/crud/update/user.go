@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 	"wifer/server/auth"
-	"wifer/server/crud/get"
 	"wifer/server/structs"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,9 +11,15 @@ import (
 
 type Props = structs.Props
 
-func Logout(w http.ResponseWriter, r *http.Request, props Props) {
-	id := get.UserID(w, r, props)
+// Изменить дату последнего посещения для пользователя
+func ChangeLastOnline(props Props, timestamp bool, id int) {
+	props.DB["users"].UpdateOne(props.Ctx, bson.M{"_id": id}, bson.D{
+		{Key: "$set", Value: bson.D{{Key: "online", Value: timestamp}}},
+		{Key: "$set", Value: bson.D{{Key: "last_time", Value: time.Now().Unix()}}},
+	})
+}
 
+func Logout(w http.ResponseWriter, r *http.Request, props Props, id int) {
 	props.DB["users"].UpdateOne(props.Ctx, bson.M{"_id": id}, bson.D{
 		{Key: "$set", Value: bson.D{{Key: "online", Value: false}}},
 		{Key: "$set", Value: bson.D{{Key: "last_time", Value: time.Now().Unix()}}},

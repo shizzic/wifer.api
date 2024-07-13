@@ -27,8 +27,8 @@ type Config struct {
 }
 
 type Auth struct {
-	ID   int    `query:"id"`   // id пользователя
-	Code string `query:"code"` // код валидации
+	ID   int    `json:"id" query:"id"`     // id пользователя
+	Code string `json:"code" query:"code"` // код валидации
 }
 
 type Email struct {
@@ -47,30 +47,28 @@ type Props struct {
 
 // Поля пользователя
 type User struct {
-	ID         int    `query:"id"`
-	Username   string `query:"username"`
-	Email      string `query:"email"`
-	Title      string `query:"title"`
-	About      string `query:"about"`
-	Country_id int    `json:"country_id"`
-	City_id    int    `json:"city_id"`
-	Country    int    `query:"country_id"`
-	City       int    `query:"city_id"`
-	Sex        int    `query:"sex"`
-	Age        int    `query:"age"`
-	Height     int    `query:"height"`
-	Weight     int    `query:"weight"`
-	Body       int    `query:"body"`
-	Smokes     int    `query:"smokes"`
-	Drinks     int    `query:"drinks"`
-	Ethnicity  int    `query:"ethnicity"`
-	Search     []int  `query:"search"`
-	Prefer     int    `query:"prefer"`
-	Income     int    `query:"income"`
-	Children   int    `query:"children"`
-	Industry   int    `query:"industry"`
-	Online     bool   `query:"online"`
-	Premium    int64  `json:"premium"`
+	ID        int    `json:"id" query:"id"`
+	Username  string `json:"username" query:"username"`
+	Email     string `json:"email" query:"email"`
+	Title     string `json:"title" query:"title"`
+	About     string `json:"about" query:"about"`
+	Country   int    `json:"country_id" query:"country_id"` // country_id
+	City      int    `json:"city_id" query:"city_id"`       // city_id
+	Sex       int    `json:"sex" query:"sex"`
+	Age       int    `json:"age" query:"age"`
+	Height    int    `json:"height" query:"height"`
+	Weight    int    `json:"weight" query:"weight"`
+	Body      int    `json:"body" query:"body"`
+	Smokes    int    `json:"smokes" query:"smokes"`
+	Drinks    int    `json:"drinks" query:"drinks"`
+	Ethnicity int    `json:"ethnicity" query:"ethnicity"`
+	Search    []int  `json:"search" query:"search"`
+	Prefer    int    `json:"prefer" query:"prefer"`
+	Income    int    `json:"income" query:"income"`
+	Children  int    `json:"children" query:"children"`
+	Industry  int    `json:"industry" query:"industry"`
+	Online    bool   `json:"online" query:"online"`
+	Premium   int64  `json:"premium" query:"premium"`
 }
 
 // Набор действий открытого профиля в отношении открывающего
@@ -78,4 +76,13 @@ type Target struct {
 	Like    bson.M   // Лайкнул или нет
 	Private []bson.M // Дал доступ к приватным фото или нет
 	Access  []bson.M // Дал доступ к переписке
+}
+
+// Структура для регистрации
+type Signin struct {
+	ID     string `json:"id" query:"id"`
+	Token  string `json:"token" query:"token"`
+	Email  string `json:"email" query:"email"`
+	Method string `json:"method" query:"method"`
+	Api    bool   `json:"api" query:"api"`
 }

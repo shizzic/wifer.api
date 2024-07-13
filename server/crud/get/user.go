@@ -4,11 +4,16 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"wifer/server/auth"
+	"wifer/server/crud/update"
+	"wifer/server/structs"
 
 	unrolled "github.com/unrolled/render"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+type Signin = structs.Signin
 
 var render = unrolled.New()
 
@@ -59,4 +64,29 @@ func Profile(id int, props Props) (bson.M, error) {
 	}
 
 	return user, nil
+}
+
+func UserEmailByApi(data Signin) (email string, err error) {
+	switch data.Method {
+	case "Google":
+		email, err = auth.IsGoogle(data.ID, data.Token)
+	case "Facebook":
+		email, err = auth.IsFacebook(data.ID, data.Token)
+	}
+	return
+}
+
+// Получаю пользователя и список айдишников юзеров, которые ему отписали (не прочитанные сообщения)
+func UserAndMessagedHimIds(props Props, w http.ResponseWriter, r *http.Request) (bson.M, []interface{}) {
+	id := UserID(w, r, props)
+
+	var user bson.M
+	opts := options.FindOne().SetProjection(bson.M{"_id": 0, "username": 1, "avatar": 1, "trial": 1, "premium": 1})
+	props.DB["users"].FindOne(props.Ctx, bson.M{"_id": id}, opts).Decode(&user)
+
+	update.Premium(props, w, r, id, user)
+
+	// Получить список пользователей, которые отправили залогиненому юзеру сообщение хотя бы 1 раз (не прочитанное)
+	newMessages, _ := props.DB["messages"].Distinct(props.Ctx, "user", bson.M{"target": id, "viewed": false})
+	return user, newMessages
 }

@@ -1,41 +1,10 @@
 package auth
 
 import (
-	"context"
-	"errors"
 	"regexp"
-
-	"google.golang.org/api/idtoken"
 )
 
-// Block of ipa's for Sign In
-
-func isGoogle(id, token string) (string, error) {
-	data, err := idtoken.Validate(context.Background(), token, id)
-
-	if err != nil {
-		return "", errors.New("0")
-	}
-
-	return data.Claims["email"].(string), nil
-}
-
-// func isFacebook(id, token string) (string, error) {
-// 	data, err := fb.Get("/"+id, fb.Params{
-// 		"fields":       "email",
-// 		"access_token": token,
-// 	})
-
-// 	if err != nil {
-// 		return "", errors.New("0")
-// 	}
-
-// 	return data["email"].(string), nil
-// }
-
-// --------------------------------------------------------------------
-
-// Check if code from email valid for use
+// Проверить валиден ли код пришедший по почте
 func isCode(code string) bool {
 	return len(code) == 6
 }

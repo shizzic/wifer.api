@@ -12,22 +12,22 @@ type Props = structs.Props
 type Target = structs.Target
 
 // Получить все действия открываемого профиля, относящиеся к открывающему пользователю
-func GetTarget(target int, w http.ResponseWriter, r *http.Request, props Props) Target {
+func TargetProfileActions(target int, w http.ResponseWriter, r *http.Request, props Props) Target {
 	id := UserID(w, r, props)
 	var data Target
 
 	if id > 0 && id != target && target > 0 {
 		// AddView(idInt, target, c)
 
-		if err, like := getLikes(id, target, props); !err {
+		if err, like := likes(id, target, props); !err {
 			data.Like = like
 		}
 
-		if err, priv := getAccessesForImages(id, target, props); !err {
+		if err, priv := accessesForImages(id, target, props); !err {
 			data.Private = priv
 		}
 
-		if err, access := getAccessesForTexting(id, target, props); !err {
+		if err, access := accessesForTexting(id, target, props); !err {
 			data.Access = access
 		}
 
@@ -38,7 +38,7 @@ func GetTarget(target int, w http.ResponseWriter, r *http.Request, props Props) 
 }
 
 // Узнать, лайкнул ли человек, открываемый профиль
-func getLikes(id, target int, props Props) (bool, bson.M) {
+func likes(id, target int, props Props) (bool, bson.M) {
 	var like bson.M
 	opts := options.FindOne().SetProjection(bson.M{"_id": 0, "text": 1})
 
@@ -50,7 +50,7 @@ func getLikes(id, target int, props Props) (bool, bson.M) {
 }
 
 // Узнать, есть ли у пользователя доступ к приватным фотографиям для профиля, который он открывает
-func getAccessesForImages(id, target int, props Props) (bool, []bson.M) {
+func accessesForImages(id, target int, props Props) (bool, []bson.M) {
 	arr := [2]int{}
 	arr[0] = id
 	arr[1] = target
@@ -69,7 +69,7 @@ func getAccessesForImages(id, target int, props Props) (bool, []bson.M) {
 }
 
 // Узнать, есть ли у пользователя доступ к написанию сообщений профилю, который он открывает
-func getAccessesForTexting(id, target int, props Props) (bool, []bson.M) {
+func accessesForTexting(id, target int, props Props) (bool, []bson.M) {
 	arr := [2]int{}
 	arr[0] = id
 	arr[1] = target
@@ -85,32 +85,4 @@ func getAccessesForTexting(id, target int, props Props) (bool, []bson.M) {
 	}
 
 	return true, data
-}
-
-// Получить кол-во всех не увиденных уведомлений
-func GetNotifications(w http.ResponseWriter, r *http.Request, props Props) map[string]int64 {
-	id := UserID(w, r, props)
-	data := make(map[string]int64)
-
-	iLikes, err := props.DB["likes"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false})
-	if err == nil {
-		data["likes"] = iLikes
-	}
-
-	iViews, err := props.DB["views"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false})
-	if err == nil {
-		data["views"] = iViews
-	}
-
-	iPrivates, err := props.DB["private"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false})
-	if err == nil {
-		data["privates"] = iPrivates
-	}
-
-	iAccesses, err := props.DB["access"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false})
-	if err == nil {
-		data["accesses"] = iAccesses
-	}
-
-	return data
 }
