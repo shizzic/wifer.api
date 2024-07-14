@@ -13,6 +13,7 @@ type Props = structs.Props
 type Auth = structs.Auth
 type User = structs.User
 type Signin = structs.Signin
+type Images = structs.Images
 
 var render = unrolled.New()
 

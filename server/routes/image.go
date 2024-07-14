@@ -1,23 +1,48 @@
 package routes
 
 import (
-	"io"
+	"errors"
 	"net/http"
 	"os"
+	im "wifer/server/image"
+
+	decoder "github.com/jesse0michael/go-request"
 )
 
 func image(props *Props) {
-	props.R.Post("/upload-image", func(w http.ResponseWriter, r *http.Request) {
-		r.ParseMultipartForm(20 << 20)                                  // указываем максимальный размер файла, 20мб
-		file, _, _ := r.FormFile("file")                                // извлекаю файл с именем "file"
-		F, _ := os.OpenFile("image.jpg", os.O_WRONLY|os.O_CREATE, 0666) // создаю пустышку для будущего файла в текущем каталоге
-		io.Copy(F, file)                                                // Копирую файл в переменную F, то есть в каталог скрипта
+	props.R.Get("/file", func(w http.ResponseWriter, r *http.Request) {
+		var data Images
+		decoder.Decode(r, &data)
+		path, err := im.GetFilePath(props, r, &data)
+		if err != nil {
+			render.JSON(w, http.StatusUnauthorized, map[string]string{})
+			return
+		}
+		fileBytes, err := os.ReadFile(path)
+		if err != nil {
+			render.JSON(w, http.StatusUnauthorized, map[string]string{})
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/octet-stream")
+		w.Write(fileBytes)
+	})
 
-		// files := r.MultipartForm.File["file[]"]
-		// for i, header := range files {
-		// 	file, _ := header.Open()
-		// 	fmt.Print(i)
-		// 	fmt.Print("\n")
-		// }
+	props.R.Post("/upload-image", func(w http.ResponseWriter, r *http.Request) {
+		if err := r.ParseMultipartForm(20 << 20); err != nil {
+			render.JSON(w, http.StatusBadRequest, map[string]string{"error": errors.New("max_size").Error()})
+			return
+		}
+
+		var data Images
+		decoder.Decode(r, &data)
+		im.FillStrcut(props, r, &data)
+		overcount, err := im.Upload(props, r, &data)
+		if err != nil {
+			render.JSON(w, http.StatusBadRequest, map[string]interface{}{"error": err.Error(), "overcount": overcount})
+			return
+		}
+
+		render.JSON(w, http.StatusOK, map[string]string{})
 	})
 }

@@ -26,10 +26,12 @@ go.work.sum
 
 # my
 idea/
-dateshipper
+wifer
 
 /cron_dump/*
-!cron_dump/.gitkeep 
+!cron_dump/.gitkeep
+
+# Не чекать фотки
 /images
 
 .git/

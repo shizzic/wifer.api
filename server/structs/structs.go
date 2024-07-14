@@ -92,3 +92,24 @@ type Translate struct {
 	Text string `json:"text" query:"text"`
 	Lang string `json:"lang" query:"lang"`
 }
+
+// дАнные для добавления фотографий
+type Images struct {
+	ID           int
+	StrId        string
+	Path         string // путь до входной папки
+	Avatar       string
+	IsAvatar     bool `json:"isAvatar" query:"isAvatar"`
+	Public       string
+	Private      string
+	FullPath     string // путь без названия
+	Output       string // путь с названием
+	Count        int8
+	CountPublic  int8
+	CountPrivate int8
+	Into         string `json:"dir" query:"dir"`
+	NewDir       string `json:"newDir" query:"newDir"`
+	Filename     string `json:"filename" query:"filename"`
+	What         string `json:"what" query:"what"`
+	Target       string `json:"target_id" query:"target_id"`
+}
