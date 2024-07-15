@@ -18,10 +18,12 @@ func FillStrcut(props *structs.Props, r *http.Request, data *Images) {
 	data.Public = data.Path + "/public"
 	data.Private = data.Path + "/private"
 	data.Avatar = data.Path + "/avatar.webp"
-	if data.Into == "public" {
-		data.FullPath = data.Public + "/"
-	} else {
-		data.FullPath = data.Private + "/"
+	if data.Into != "" {
+		if data.Into == "public" {
+			data.FullPath = data.Public + "/"
+		} else {
+			data.FullPath = data.Private + "/"
+		}
 	}
 	count(data)
 

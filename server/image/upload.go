@@ -61,7 +61,7 @@ func save(props *structs.Props, data *Images, file multipart.File) {
 		data.IsAvatar = true
 	}
 
-	os.WriteFile(output, buf.Bytes(), 0777)
+	os.WriteFile(output, buf.Bytes(), 0666)
 	convertToWEBP(output)
 	updateCounts(props, data)
 }

@@ -57,6 +57,7 @@ func Profile(id int, props *Props) (bson.M, error) {
 		"online":     1,
 		"country_id": 1,
 		"city_id":    1,
+		"images":     1,
 	})
 
 	if err := props.DB["users"].FindOne(props.Ctx, bson.M{"_id": id, "status": true}, opts).Decode(&user); err != nil {
