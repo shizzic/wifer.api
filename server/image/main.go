@@ -1,6 +1,7 @@
 package image
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"strconv"
@@ -43,9 +44,64 @@ func count(data *Images) {
 	data.Count = data.CountPublic + data.CountPrivate // кол-во фоток у юзера без учета аватарки
 
 	_, err := os.Stat(data.Avatar)
-	if err == nil {
+	if errors.Is(err, os.ErrNotExist) {
+		data.IsAvatar = false
+	} else {
 		data.IsAvatar = true
 		data.Count++
+	}
+}
+
+// Поставить аву из имеющихся фоток, если ее по какой то причине больше нету
+// В приоритете публичные папка
+func restoreAvatar(data *Images) {
+	if !data.IsAvatar {
+		dirs := [2]string{"public", "private"}
+
+	out:
+		for _, dir := range dirs {
+			path := data.Path + "/" + dir
+			files, _ := os.ReadDir(path)
+
+			for _, image := range files {
+				if image.Name() != "new.webp" {
+					from := path + "/" + image.Name()
+					to := data.Avatar
+					move(from, to)
+					break out
+				}
+			}
+		}
+	}
+}
+
+// Переименную фотки в каждой папке с 1 и до конца
+func rename(props *structs.Props, data *Images) {
+	dirs := [2]string{"public", "private"}
+
+	for _, dir := range dirs {
+		path := data.Path + "/" + dir
+		files, _ := os.ReadDir(path)
+
+		for index, image := range files {
+			new_name := strconv.Itoa(index+1) + ".webp"
+
+			if image.Name() != new_name {
+				from := path + "/" + image.Name()
+				to := path + "/" + new_name
+				move(from, to)
+			}
+		}
+	}
+
+	count(data)
+	updateCounts(props, data)
+}
+
+// Переместить файл
+func move(from, to string) {
+	if err := os.Rename(from, to); err != nil {
+		move(from, to)
 	}
 }
 

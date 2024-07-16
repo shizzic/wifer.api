@@ -46,6 +46,7 @@ func Upload(props *structs.Props, r *http.Request, data *Images) (overcount int8
 		}
 	}
 
+	rename(props, data)
 	return
 }
 

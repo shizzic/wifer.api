@@ -65,5 +65,21 @@ func image(props *Props) {
 			render.JSON(w, http.StatusOK, map[string]interface{}{"message": "changed"})
 		})
 
+		r.Put("/replaceAvatar", func(w http.ResponseWriter, r *http.Request) {
+			var data Images
+			im.FillStrcut(props, r, &data)
+			decoder.Decode(r, &data)
+
+			im.ReplaceAvatar(props, &data)
+			render.JSON(w, http.StatusOK, map[string]interface{}{"message": "replaced"})
+		})
+
+		r.Delete("/deleteImage", func(w http.ResponseWriter, r *http.Request) {
+			var data Images
+			im.FillStrcut(props, r, &data)
+			decoder.Decode(r, &data)
+			im.DeleteImage(props, &data)
+			render.JSON(w, http.StatusBadRequest, map[string]interface{}{"message": "deleted"})
+		})
 	})
 }
