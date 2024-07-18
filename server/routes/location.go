@@ -9,15 +9,18 @@ import (
 
 func location(props *Props) {
 	props.R.Get("/country", func(w http.ResponseWriter, r *http.Request) {
-		countries := get.Countries(props)
+		locale := r.URL.Query().Get("locale")
+
+		countries := get.Countries(props, locale)
 		render.JSON(w, http.StatusOK, countries)
 	})
 
 	props.R.Get("/city", func(w http.ResponseWriter, r *http.Request) {
 		var data User
 		decoder.Decode(r, &data)
+		locale := r.URL.Query().Get("locale")
 
-		cities := get.Cities(props, data.Country)
+		cities := get.Cities(props, data.Country, locale)
 		render.JSON(w, http.StatusOK, cities)
 	})
 }
