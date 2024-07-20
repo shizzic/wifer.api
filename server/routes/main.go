@@ -21,5 +21,6 @@ func Declare(props *Props) {
 	user(props)
 	location(props)
 	image(props)
+	template(props)
 	other(props)
 }

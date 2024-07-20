@@ -71,6 +71,39 @@ type User struct {
 	Premium   int64  `json:"premium" query:"premium"`
 }
 
+// Поля поиска по шаблону
+type Template struct {
+	Limit       int64  `json:"limit"`
+	Skip        int64  `json:"skip"`
+	Sort        string `json:"sort"`
+	AgeMin      int    `json:"ageMin"`
+	AgeMax      int    `json:"ageMax"`
+	ImagesMin   int    `json:"imagesMin"`
+	ImagesMax   int    `json:"imagesMax"`
+	HeightMin   int    `json:"heightMin"`
+	HeightMax   int    `json:"heightMax"`
+	WeightMin   int    `json:"weightMin"`
+	WeightMax   int    `json:"weightMax"`
+	ChildrenMin int    `json:"childrenMin"`
+	ChildrenMax int    `json:"childrenMax"`
+	Body        []int  `json:"body"`
+	Sex         []int  `json:"sex"`
+	Smokes      []int  `json:"smokes"`
+	Drinks      []int  `json:"drinks"`
+	Ethnicity   []int  `json:"ethnicity"`
+	Search      []int  `json:"search"`
+	Income      []int  `json:"income"`
+	Industry    []int  `json:"industry"`
+	Premium     []int  `json:"premium"`
+	Prefer      []int  `json:"prefer"`
+	Country     []int  `json:"country"`
+	City        []int  `json:"city"`
+	Text        string `json:"text"`
+	IsAbout     bool   `json:"is_about"`
+	Avatar      bool   `json:"avatar"`
+	Count       bool   `json:"count"`
+}
+
 // Набор действий открытого профиля в отношении открывающего
 type Target struct {
 	Like    bson.M   // Лайкнул или нет

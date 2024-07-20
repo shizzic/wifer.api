@@ -91,3 +91,118 @@ func UserAndMessagedHimIds(props *Props, w http.ResponseWriter, r *http.Request)
 	newMessages, _ := props.DB["messages"].Distinct(props.Ctx, "user", bson.M{"target": id, "viewed": false})
 	return user, newMessages
 }
+
+// Фильтр полей для поиска пользователей
+func PrepareFilter(data *structs.Template) bson.M {
+	filter := bson.M{
+		"age":      bson.M{"$gte": data.AgeMin, "$lte": data.AgeMax},
+		"height":   bson.M{"$gte": data.HeightMin, "$lte": data.HeightMax},
+		"weight":   bson.M{"$gte": data.WeightMin, "$lte": data.WeightMax},
+		"children": bson.M{"$gte": data.ChildrenMin, "$lte": data.ChildrenMax},
+		"images":   bson.M{"$gte": data.ImagesMin, "$lte": data.ImagesMax},
+	}
+
+	if len(data.Body) > 0 {
+		filter["body"] = bson.M{"$in": data.Body}
+	}
+
+	if len(data.Sex) > 0 {
+		filter["sex"] = bson.M{"$in": data.Sex}
+	}
+
+	if len(data.Smokes) > 0 {
+		filter["smokes"] = bson.M{"$in": data.Smokes}
+	}
+
+	if len(data.Drinks) > 0 {
+		filter["drinks"] = bson.M{"$in": data.Drinks}
+	}
+
+	if len(data.Ethnicity) > 0 {
+		filter["ethnicity"] = bson.M{"$in": data.Ethnicity}
+	}
+
+	if len(data.Search) > 0 {
+		filter["search"] = bson.M{"$in": data.Search}
+	}
+
+	if len(data.Income) > 0 {
+		filter["income"] = bson.M{"$in": data.Income}
+	}
+
+	if len(data.Industry) > 0 {
+		filter["industry"] = bson.M{"$in": data.Industry}
+	}
+
+	if len(data.Premium) > 0 {
+		filter["premium"] = bson.M{"$in": data.Premium}
+	}
+
+	if len(data.Country) > 0 {
+		filter["country_id"] = bson.M{"$in": data.Country}
+	}
+
+	if len(data.City) > 0 {
+		filter["city_id"] = bson.M{"$in": data.City}
+	}
+
+	if data.IsAbout {
+		filter["is_about"] = true
+	}
+
+	if data.Avatar {
+		filter["avatar"] = true
+	}
+
+	if data.Text != "" {
+		filter["$text"] = bson.M{"$search": data.Text}
+	}
+
+	filter["status"] = true
+	filter["active"] = true
+
+	return filter
+}
+
+// Посчитать кол-во пользователей по заданному фильтру
+func CountUsersByFilter(props *structs.Props, filter *bson.M) int64 {
+	count, err := props.DB["users"].CountDocuments(props.Ctx, filter)
+
+	if err != nil {
+		return 0
+	} else {
+		return count
+	}
+}
+
+// Получаю пользователей по выбранному (одному) фильтру
+func UsersByFilter(props *structs.Props, data *structs.Template, filter *bson.M) (list []bson.M) {
+	opts := options.Find().SetProjection(bson.M{
+		"username":   1,
+		"title":      1,
+		"age":        1,
+		"weight":     1,
+		"height":     1,
+		"body":       1,
+		"ethnicity":  1,
+		"public":     1,
+		"private":    1,
+		"avatar":     1,
+		"premium":    1,
+		"country_id": 1,
+		"city_id":    1,
+		"online":     1,
+		"is_about":   1,
+	}).
+		SetSort(bson.D{
+			{Key: "premium", Value: -1},
+			{Key: data.Sort, Value: -1},
+			{Key: "_id", Value: 1},
+		}).
+		SetLimit(data.Limit).
+		SetSkip(data.Skip)
+
+	cursor, _ := props.DB["users"].Find(props.Ctx, filter, opts)
+	cursor.All(props.Ctx, &list)
+	return
+}

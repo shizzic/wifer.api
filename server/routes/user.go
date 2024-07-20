@@ -7,6 +7,7 @@ import (
 	"wifer/server/crud/get"
 	"wifer/server/crud/update"
 	"wifer/server/middlewares"
+	"wifer/server/structs"
 
 	"github.com/go-chi/chi/v5"
 	decoder "github.com/jesse0michael/go-request"
@@ -23,6 +24,21 @@ func user(props *Props) {
 				render.JSON(w, http.StatusNotFound, map[string]string{"error": err.Error()})
 			} else {
 				render.JSON(w, http.StatusOK, map[string]any{"user": user, "target": target})
+			}
+		})
+
+		r.Post("/getUsers", func(w http.ResponseWriter, r *http.Request) {
+			var data structs.Template
+			decoder.Decode(r, &data)
+			filter := get.PrepareFilter(&data)
+
+			if data.Count {
+				render.JSON(w, http.StatusOK, map[string]interface{}{
+					"users": get.UsersByFilter(props, &data, &filter),
+					"count": get.CountUsersByFilter(props, &filter),
+				})
+			} else {
+				render.JSON(w, http.StatusOK, map[string]interface{}{"users": get.CountUsersByFilter(props, &filter)})
 			}
 		})
 

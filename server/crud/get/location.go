@@ -1,6 +1,7 @@
 package get
 
 import (
+	"regexp"
 	"strings"
 
 	gt "github.com/bas24/googletranslatefree"
@@ -30,7 +31,7 @@ func Cities(props *Props, country_id int, locale string) []bson.M {
 // Перевод локаций
 func translate(data []bson.M, locale string) []bson.M {
 	from := 0
-	divider := "."
+	divider := ";"
 	slices := split(data)
 
 	for _, slice := range slices {
@@ -42,8 +43,9 @@ func translate(data []bson.M, locale string) []bson.M {
 
 		str = strings.Trim(str, divider)
 		translated, _ := gt.Translate(str, "en", locale)
-		translated = strings.Replace(translated, " ", "", -1)
-		splitted := strings.Split(translated, divider+divider)
+		// translated = strings.Replace(translated, " ", "", -1) 	// удаление вообще всех пробелов в строке
+		trimmed := removeWhiteSpaces(translated)
+		splitted := strings.Split(trimmed, divider+divider)
 
 		for _, value := range splitted {
 			data[from]["title"] = value
@@ -70,5 +72,14 @@ func split(data []bson.M) (result [][]bson.M) {
 		result = append(result, data[min:max])
 	}
 
+	return
+}
+
+// Удаляю лишнии пробелы в переведенной строке
+func removeWhiteSpaces(str string) (result string) {
+	re := regexp.MustCompile(`;[\s,]*;`)
+	result = re.ReplaceAllString(str, `;;`)
+	re = regexp.MustCompile(`[\s,]*;;[\s,]*`)
+	result = re.ReplaceAllString(result, `;;`)
 	return
 }
