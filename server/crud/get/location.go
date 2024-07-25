@@ -3,13 +3,14 @@ package get
 import (
 	"regexp"
 	"strings"
+	"wifer/server/structs"
 
 	gt "github.com/bas24/googletranslatefree"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Countries(props *Props, locale string) []bson.M {
+func Countries(props *structs.Props, locale string) []bson.M {
 	var data []bson.M
 	cursor, _ := props.DB["countries"].Find(props.Ctx, bson.M{})
 	cursor.All(props.Ctx, &data)
@@ -18,7 +19,7 @@ func Countries(props *Props, locale string) []bson.M {
 	return data
 }
 
-func Cities(props *Props, country_id int, locale string) []bson.M {
+func Cities(props *structs.Props, country_id int, locale string) []bson.M {
 	var data []bson.M
 	opts := options.Find().SetProjection(bson.M{"_id": 1, "title": 1})
 	cursor, _ := props.DB["cities"].Find(props.Ctx, bson.M{"country_id": country_id}, opts)

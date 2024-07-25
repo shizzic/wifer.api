@@ -9,13 +9,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Props = structs.Props
-type Target = structs.Target
-
 // Получить все действия открываемого профиля, относящиеся к открывающему пользователю
-func TargetProfileActions(target int, w http.ResponseWriter, r *http.Request, props *Props) Target {
+func TargetProfileActions(target int, w http.ResponseWriter, r *http.Request, props *structs.Props) structs.Actions {
 	id := UserID(w, r, props)
-	var data Target
+	var data structs.Actions
 
 	if id > 0 && id != target && target > 0 {
 		create.ProfileView(props, id, target)
@@ -39,7 +36,7 @@ func TargetProfileActions(target int, w http.ResponseWriter, r *http.Request, pr
 }
 
 // Узнать, лайкнул ли человек, открываемый профиль
-func likes(id, target int, props *Props) (bool, bson.M) {
+func likes(id, target int, props *structs.Props) (bool, bson.M) {
 	var like bson.M
 	opts := options.FindOne().SetProjection(bson.M{"_id": 0, "text": 1})
 
@@ -51,7 +48,7 @@ func likes(id, target int, props *Props) (bool, bson.M) {
 }
 
 // Узнать, есть ли у пользователя доступ к приватным фотографиям для профиля, который он открывает
-func accessesForImages(id, target int, props *Props) (bool, []bson.M) {
+func accessesForImages(id, target int, props *structs.Props) (bool, []bson.M) {
 	arr := [2]int{}
 	arr[0] = id
 	arr[1] = target
@@ -70,7 +67,7 @@ func accessesForImages(id, target int, props *Props) (bool, []bson.M) {
 }
 
 // Узнать, есть ли у пользователя доступ к написанию сообщений профилю, который он открывает
-func accessesForTexting(id, target int, props *Props) (bool, []bson.M) {
+func accessesForTexting(id, target int, props *structs.Props) (bool, []bson.M) {
 	arr := [2]int{}
 	arr[0] = id
 	arr[1] = target

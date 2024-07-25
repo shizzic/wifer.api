@@ -15,13 +15,13 @@ func template(props *Props) {
 	props.R.Group(func(r chi.Router) {
 		r.Use(middlewares.Auth(props))
 
-		props.R.Get("/templates", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/templates", func(w http.ResponseWriter, r *http.Request) {
 			id := get.UserID(w, r, props)
 			result := get.Templates(props, id)
 			render.JSON(w, http.StatusOK, result)
 		})
 
-		props.R.Post("/templates", func(w http.ResponseWriter, r *http.Request) {
+		r.Post("/templates", func(w http.ResponseWriter, r *http.Request) {
 			var data structs.Template
 			decoder.Decode(r, &data)
 			id := get.UserID(w, r, props)

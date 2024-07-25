@@ -1,11 +1,13 @@
 package get
 
 import (
+	"wifer/server/structs"
+
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Получаю кол-во новых уведомлений для каждого типа действия
-func Notifications(props *Props, id int) map[string]int64 {
+func Notifications(props *structs.Props, id int) map[string]int64 {
 	data := make(map[string]int64)
 
 	iLikes, err := props.DB["likes"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false})
@@ -32,7 +34,7 @@ func Notifications(props *Props, id int) map[string]int64 {
 }
 
 // Узнать кол-во всех пользователей
-func CountAll(props *Props) int64 {
+func CountAll(props *structs.Props) int64 {
 	count, err := props.DB["users"].CountDocuments(props.Ctx, bson.M{"status": true})
 
 	if err != nil {

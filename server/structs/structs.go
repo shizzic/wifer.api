@@ -104,11 +104,23 @@ type Template struct {
 	Count       bool   `json:"count"`
 }
 
-// Набор действий открытого профиля в отношении открывающего
-type Target struct {
+// Набор доступов-действий открытого профиля в отношении открывающего
+type Actions struct {
+	Target  int      // id таргета
 	Like    bson.M   // Лайкнул или нет
 	Private []bson.M // Дал доступ к приватным фото или нет
-	Access  []bson.M // Дал доступ к переписке
+	Access  []bson.M // Дал доступ к переписке или нет
+}
+
+// Параметры для поиска всех кто сделал хотя бы 1 действие в отношении юзера и наоборот
+type Target struct {
+	Target int    `json:"target" query:"target"`
+	Which  int    `json:"which" query:"which"`
+	Skip   int64  `json:"skip" query:"skip"`
+	Limit  int64  `json:"limit" query:"limit"`
+	Mode   bool   `json:"mode" query:"mode"`
+	Count  bool   `json:"count" query:"count"`
+	Text   string `json:"text" query:"text"` // Это поле нужно для добавления заметок на лайк
 }
 
 // Структура для регистрации
@@ -126,7 +138,7 @@ type Translate struct {
 	Lang string `json:"lang" query:"lang"`
 }
 
-// дАнные для добавления фотографий
+// Данные для добавления фотографий
 type Images struct {
 	ID           int
 	StrId        string

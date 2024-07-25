@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"strings"
 	"wifer/server/auth"
 	"wifer/server/crud/create"
 	"wifer/server/crud/get"
@@ -15,7 +16,7 @@ import (
 
 func user(props *Props) {
 	props.R.Group(func(r chi.Router) {
-		props.R.Get("/profile", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/profile", func(w http.ResponseWriter, r *http.Request) {
 			var data User
 			decoder.Decode(r, &data)
 
@@ -42,7 +43,13 @@ func user(props *Props) {
 			}
 		})
 
-		props.R.Post("/signin", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/checkUsername", func(w http.ResponseWriter, r *http.Request) {
+			username := strings.TrimSpace(r.URL.Query().Get("username"))
+			result := get.CheckUsernameAvailability(props, username)
+			render.JSON(w, http.StatusOK, result)
+		})
+
+		r.Post("/signin", func(w http.ResponseWriter, r *http.Request) {
 			var data Signin
 			decoder.Decode(r, &data)
 
@@ -66,7 +73,7 @@ func user(props *Props) {
 			}
 		})
 
-		props.R.Post("/checkCode", func(w http.ResponseWriter, r *http.Request) {
+		r.Post("/checkCode", func(w http.ResponseWriter, r *http.Request) {
 			var data Auth
 			decoder.Decode(r, &data)
 
@@ -81,7 +88,7 @@ func user(props *Props) {
 	props.R.Group(func(r chi.Router) {
 		r.Use(middlewares.Auth(props))
 
-		props.R.Get("/online", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/online", func(w http.ResponseWriter, r *http.Request) {
 			var data User
 			decoder.Decode(r, &data)
 			id := get.UserID(w, r, props)
@@ -89,7 +96,7 @@ func user(props *Props) {
 			update.ChangeLastOnline(props, data.Online, id)
 		})
 
-		props.R.Get("/getParamsAfterLogin", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/getParamsAfterLogin", func(w http.ResponseWriter, r *http.Request) {
 			user, messages := get.UserAndMessagedHimIds(props, w, r)
 			render.JSON(w, http.StatusOK, map[string]interface{}{
 				"user":     user,
@@ -97,7 +104,7 @@ func user(props *Props) {
 			})
 		})
 
-		props.R.Put("/change", func(w http.ResponseWriter, r *http.Request) {
+		r.Put("/change", func(w http.ResponseWriter, r *http.Request) {
 			var data User
 			decoder.Decode(r, &data)
 			id := get.UserID(w, r, props)
@@ -109,9 +116,14 @@ func user(props *Props) {
 			}
 		})
 
-		props.R.Put("/logout", func(w http.ResponseWriter, r *http.Request) {
+		r.Put("/logout", func(w http.ResponseWriter, r *http.Request) {
 			id := get.UserID(w, r, props)
 			update.Logout(w, r, props, id)
+		})
+
+		r.Put("/deactivate", func(w http.ResponseWriter, r *http.Request) {
+			id := get.UserID(w, r, props)
+			update.DeactivateAccount(w, r, props, id)
 		})
 	})
 }

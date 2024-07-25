@@ -12,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// И вход, и регистрация
 func Signin(props *auth.Props, w http.ResponseWriter, email string, isApi bool) (int, error) {
 	if !auth.IsEmailValid(email) {
 		return 0, errors.New("1")
