@@ -158,3 +158,27 @@ type Images struct {
 	What         string `json:"what" query:"what"`
 	Target       string `json:"target_id" query:"target_id"`
 }
+
+type Messages struct {
+	Target int   `json:"target" query:"target"`
+	Skip   int64 `json:"skip" query:"skip"`
+	Access bool  `json:"access" query:"access"`
+}
+
+type Rooms struct {
+	Nin        []int  `json:"nin" query:"nin"`
+	Username   string `json:"username" query:"username"`
+	ByUsername bool   `json:"byUsername" query:"byUsername"`
+}
+
+type Message struct {
+	Api        string `json:"api"`
+	Text       string `json:"text"`
+	Username   string `json:"username"`
+	User       int    `json:"user"`
+	Target     int    `json:"target"`
+	Access     bool   `json:"access"`
+	Typing     bool   `json:"typing"`
+	Avatar     bool   `json:"avatar"`
+	Created_at int64  `json:"created_at"`
+}

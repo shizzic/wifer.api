@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"wifer/server/auth"
@@ -45,6 +46,7 @@ func user(props *Props) {
 
 		r.Get("/checkUsername", func(w http.ResponseWriter, r *http.Request) {
 			username := strings.TrimSpace(r.URL.Query().Get("username"))
+			fmt.Print(username)
 			result := get.CheckUsernameAvailability(props, username)
 			render.JSON(w, http.StatusOK, result)
 		})
@@ -76,6 +78,8 @@ func user(props *Props) {
 		r.Post("/checkCode", func(w http.ResponseWriter, r *http.Request) {
 			var data Auth
 			decoder.Decode(r, &data)
+
+			fmt.Print(data)
 
 			if err := auth.CheckCode(props, data.ID, data.Code, w); err != nil {
 				render.JSON(w, http.StatusUnauthorized, map[string]string{"error": err.Error()})

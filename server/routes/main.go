@@ -24,4 +24,5 @@ func Declare(props *Props) {
 	image(props)
 	template(props)
 	other(props)
+	web_chat(props)
 }
