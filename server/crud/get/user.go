@@ -78,18 +78,15 @@ func UserEmailByApi(data Signin) (email string, err error) {
 }
 
 // Получаю пользователя и список айдишников юзеров, которые ему отписали (не прочитанные сообщения)
-func UserAndMessagedHimIds(props *structs.Props, w http.ResponseWriter, r *http.Request) (bson.M, []interface{}) {
+func UserMainInfo(props *structs.Props, w http.ResponseWriter, r *http.Request) (bson.M, bool) {
 	id := UserID(w, r, props)
 
 	var user bson.M
 	opts := options.FindOne().SetProjection(bson.M{"_id": 0, "username": 1, "avatar": 1, "trial": 1, "premium": 1})
 	props.DB["users"].FindOne(props.Ctx, bson.M{"_id": id}, opts).Decode(&user)
 
-	update.Premium(props, w, r, id, user)
-
-	// Получить список пользователей, которые отправили залогиненому юзеру сообщение хотя бы 1 раз (не прочитанное)
-	newMessages, _ := props.DB["messages"].Distinct(props.Ctx, "user", bson.M{"target": id, "viewed": false})
-	return user, newMessages
+	premium := update.Premium(props, w, r, id, user)
+	return user, premium
 }
 
 // Фильтр полей для поиска пользователей

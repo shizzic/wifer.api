@@ -25,4 +25,5 @@ func Declare(props *Props) {
 	template(props)
 	other(props)
 	web_chat(props)
+	sse(props)
 }

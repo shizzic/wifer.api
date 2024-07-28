@@ -101,10 +101,9 @@ func user(props *Props) {
 		})
 
 		r.Get("/getParamsAfterLogin", func(w http.ResponseWriter, r *http.Request) {
-			user, messages := get.UserAndMessagedHimIds(props, w, r)
+			user, _ := get.UserMainInfo(props, w, r)
 			render.JSON(w, http.StatusOK, map[string]interface{}{
-				"user":     user,
-				"messages": messages,
+				"user": user,
 			})
 		})
 

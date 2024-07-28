@@ -11,8 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Актуализирую куку премиума
-func Premium(props *Props, w http.ResponseWriter, r *http.Request, id int, user primitive.M) {
+// Актуализирую куку премиума. Возвращает наличие премиума
+func Premium(props *Props, w http.ResponseWriter, r *http.Request, id int, user primitive.M) bool {
 	// Если у пользователя был активирован премиум когда либо до и все еще не обнулен
 	if user["premium"].(int64) != 0 {
 		// Если премиум просрочился, обнуляю в бд и удаляю куку
@@ -33,6 +33,8 @@ func Premium(props *Props, w http.ResponseWriter, r *http.Request, id int, user 
 				Secure:   true,
 				SameSite: http.SameSiteNoneMode,
 			})
+
+			return false
 		} else {
 			// Создаю куку, если ее не было до
 			if _, err := r.Cookie("premium"); err != nil {
@@ -47,8 +49,12 @@ func Premium(props *Props, w http.ResponseWriter, r *http.Request, id int, user 
 					SameSite: http.SameSiteNoneMode,
 				})
 			}
+
+			return true
 		}
 	}
+
+	return false
 }
 
 func ActivateOneTimeTrial(props *structs.Props, w http.ResponseWriter, id int) (int64, error) {

@@ -10,24 +10,25 @@ import (
 func Notifications(props *structs.Props, id int) map[string]int64 {
 	data := make(map[string]int64)
 
-	iLikes, err := props.DB["likes"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false})
-	if err == nil {
+	if iLikes, err := props.DB["likes"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false}); err == nil {
 		data["likes"] = iLikes
 	}
 
-	iViews, err := props.DB["views"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false})
-	if err == nil {
+	if iViews, err := props.DB["views"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false}); err == nil {
 		data["views"] = iViews
 	}
 
-	iPrivates, err := props.DB["private"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false})
-	if err == nil {
+	if iPrivates, err := props.DB["private"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false}); err == nil {
 		data["privates"] = iPrivates
 	}
 
-	iAccesses, err := props.DB["access"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false})
-	if err == nil {
+	if iAccesses, err := props.DB["access"].CountDocuments(props.Ctx, bson.M{"target": id, "viewed": false}); err == nil {
 		data["accesses"] = iAccesses
+	}
+
+	// Получить список пользователей, которые отправили залогиненому юзеру сообщение хотя бы 1 раз (не прочитанное)
+	if messagedUsers, err := props.DB["messages"].Distinct(props.Ctx, "user", bson.M{"target": id, "viewed": false}); err == nil {
+		data["messages"] = int64(len(messagedUsers))
 	}
 
 	return data
