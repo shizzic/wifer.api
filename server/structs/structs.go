@@ -38,6 +38,14 @@ type Email struct {
 	PORT     int
 }
 
+// Для отправки сообщений любого вида
+type EmailMessage struct {
+	Name    string
+	Sender  string // Почта отправителя
+	Subject string
+	Message string
+}
+
 type Props struct {
 	Conf *Config
 	Ctx  context.Context

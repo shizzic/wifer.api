@@ -2,7 +2,6 @@ package chat
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -80,7 +79,6 @@ func (c *Handler) OnOpen(socket *gws.Conn) {
 		clients.Delete(c.ID)
 		client.NetConn().Close() // Закрываю соеденение
 		clients.Store(c.ID, socket)
-		fmt.Print("\n", "Closed existed")
 	}
 }
 

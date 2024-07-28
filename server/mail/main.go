@@ -2,7 +2,6 @@ package mail
 
 import (
 	"fmt"
-	"log"
 	"time"
 	"wifer/server/structs"
 
@@ -50,7 +49,8 @@ func SendCode(props *Props, to, code, id string) error {
 	return nil
 }
 
-func ContactMe(props *Props, name, sender, subject, message string) error {
+// Отправить сообщение юзера с рабочей почты на обычную
+func ContactMe(props *Props, data *structs.EmailMessage) error {
 	server := mail.NewSMTPClient()
 	server.Host = props.Conf.EMAIL.HOST
 	server.Port = props.Conf.EMAIL.PORT
@@ -64,23 +64,23 @@ func ContactMe(props *Props, name, sender, subject, message string) error {
 	smtpClient, err := server.Connect()
 
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 
 	email := mail.NewMSG()
 	email.SetFrom(props.Conf.PRODUCT_NAME + " <" + props.Conf.EMAIL.USERNAME + ">").
 		AddTo(props.Conf.ADMIN_EMAIL).
-		SetSubject(subject)
+		SetSubject(data.Subject)
 
 	msgUUID, _ := uuid.NewRandom()
 	msgID := fmt.Sprintf("<%s@"+props.Conf.SELF_DOMAIN_NAME+">", msgUUID.String())
 	email.AddHeader("Message-ID", msgID)
 
-	email.SetBody(mail.TextHTML, "<p>name: "+name+" - email: "+sender+"</p>"+message)
+	email.SetBody(mail.TextHTML, "<p>name: "+data.Name+" - email: "+data.Sender+"</p>"+data.Message)
 	err = email.Send(smtpClient)
 
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 
 	return nil

@@ -1,13 +1,17 @@
 package update
 
 import (
+	"errors"
 	"net/http"
 	"time"
+	"wifer/server/structs"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Актуализирую куку премиума
 func Premium(props *Props, w http.ResponseWriter, r *http.Request, id int, user primitive.M) {
 	// Если у пользователя был активирован премиум когда либо до и все еще не обнулен
 	if user["premium"].(int64) != 0 {
@@ -45,4 +49,47 @@ func Premium(props *Props, w http.ResponseWriter, r *http.Request, id int, user 
 			}
 		}
 	}
+}
+
+func ActivateOneTimeTrial(props *structs.Props, w http.ResponseWriter, id int) (int64, error) {
+	var user bson.M
+	opts := options.FindOne().SetProjection(bson.M{"_id": 0, "trial": 1, "premium": 1})
+	props.DB["users"].FindOne(props.Ctx, bson.M{"_id": id}, opts).Decode(&user)
+
+	// Даю пробник, только если он не был активирован до этого
+	if !user["trial"].(bool) {
+		now := time.Now().Unix()
+		plus := int64(86400 * 7) // кол-во дней, которое я добавляю
+		expires := now + plus    // добавляю 7 дней от нынешнего момента
+		var maxAge int           // это для куки
+
+		if user["premium"].(int64) == 0 {
+			maxAge = int(plus)
+			props.DB["users"].UpdateOne(props.Ctx, bson.M{"_id": id}, bson.D{
+				{Key: "$set", Value: bson.D{{Key: "trial", Value: true}}},
+				{Key: "$set", Value: bson.D{{Key: "premium", Value: expires}}},
+			})
+		} else {
+			expires = int64(user["premium"].(int64) + plus) // добавляю уже имеющийся примиум (его остаток)
+			maxAge = int(user["premium"].(int64) - now + plus)
+			props.DB["users"].UpdateOne(props.Ctx, bson.M{"_id": id}, bson.D{
+				{Key: "$set", Value: bson.D{{Key: "trial", Value: true}}},
+				{Key: "$set", Value: bson.D{{Key: "premium", Value: expires}}}, // прибавляю 7 дней
+			})
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "premium",
+			Value:    "premium",
+			Path:     "/",
+			Domain:   "." + props.Conf.SELF_DOMAIN_NAME,
+			MaxAge:   maxAge,
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteNoneMode,
+		})
+		return expires, nil
+	}
+
+	return 0, errors.New("0")
 }

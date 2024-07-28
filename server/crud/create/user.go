@@ -78,7 +78,7 @@ func Signin(props *auth.Props, w http.ResponseWriter, email string, isApi bool) 
 
 		if isApi {
 			id := strconv.Itoa(int(ObjectId.InsertedID.(int32)))
-			auth.MakeCookies(props, id, id, 86400*120, w)
+			auth.MakeCookies(props, id, id, 86400*120, w) // на 4 месяца
 			return int(ObjectId.InsertedID.(int32)), nil
 		} else {
 			if _, err := props.DB["ensure"].InsertOne(props.Ctx, bson.D{
@@ -104,7 +104,7 @@ func Signin(props *auth.Props, w http.ResponseWriter, email string, isApi bool) 
 		}
 
 		if isApi {
-			auth.MakeCookies(props, strconv.Itoa(int(user["_id"].(int32))), user["username"].(string), 86400*120, w)
+			auth.MakeCookies(props, strconv.Itoa(int(user["_id"].(int32))), user["username"].(string), 86400*120, w) // на 4 месяца
 			return int(user["_id"].(int32)), nil
 		} else {
 			props.DB["ensure"].DeleteOne(props.Ctx, bson.M{"_id": user["_id"]})

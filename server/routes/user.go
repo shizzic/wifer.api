@@ -129,5 +129,16 @@ func user(props *Props) {
 			id := get.UserID(w, r, props)
 			update.DeactivateAccount(w, r, props, id)
 		})
+
+		r.Put("/activate-one-time-trial", func(w http.ResponseWriter, r *http.Request) {
+			id := get.UserID(w, r, props)
+			if expires, err := update.ActivateOneTimeTrial(props, w, id); err != nil {
+				render.JSON(w, http.StatusBadRequest, map[string]string{
+					"error": err.Error(),
+				})
+			} else {
+				render.JSON(w, http.StatusOK, map[string]int64{"expires": expires})
+			}
+		})
 	})
 }

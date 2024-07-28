@@ -145,7 +145,7 @@ func Logout(w http.ResponseWriter, r *http.Request, props *Props, id int) {
 	})
 }
 
-// Меняю поле "active" на false и дулаяю куки
+// Меняю поле "active" на false и удаляю куки
 func DeactivateAccount(w http.ResponseWriter, r *http.Request, props *Props, id int) {
 	props.DB["users"].UpdateOne(props.Ctx, bson.M{"_id": id}, bson.D{
 		{Key: "$set", Value: bson.D{{Key: "active", Value: false}}},
