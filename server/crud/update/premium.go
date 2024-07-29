@@ -18,10 +18,8 @@ func Premium(props *Props, w http.ResponseWriter, r *http.Request, id int, user 
 		// Если премиум просрочился, обнуляю в бд и удаляю куку
 		if user["premium"].(int64) <= time.Now().Unix() {
 			props.DB["users"].UpdateOne(props.Ctx, bson.M{"_id": id}, bson.D{
-				{Key: "$set", Value: bson.D{{Key: "premium", Value: 0}}},
+				{Key: "$set", Value: bson.D{{Key: "premium", Value: int64(0)}}},
 			})
-
-			user["premium"] = 0
 
 			http.SetCookie(w, &http.Cookie{
 				Name:     "premium",

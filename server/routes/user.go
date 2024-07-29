@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"wifer/server/auth"
@@ -33,20 +32,16 @@ func user(props *Props) {
 			var data structs.Template
 			decoder.Decode(r, &data)
 			filter := get.PrepareFilter(&data)
-
+			result := make(map[string]interface{})
+			result["users"] = get.UsersByFilter(props, &data, &filter)
 			if data.Count {
-				render.JSON(w, http.StatusOK, map[string]interface{}{
-					"users": get.UsersByFilter(props, &data, &filter),
-					"count": get.CountUsersByFilter(props, &filter),
-				})
-			} else {
-				render.JSON(w, http.StatusOK, map[string]interface{}{"users": get.CountUsersByFilter(props, &filter)})
+				result["count"] = get.CountUsersByFilter(props, &filter)
 			}
+			render.JSON(w, http.StatusOK, result)
 		})
 
 		r.Get("/checkUsername", func(w http.ResponseWriter, r *http.Request) {
 			username := strings.TrimSpace(r.URL.Query().Get("username"))
-			fmt.Print(username)
 			result := get.CheckUsernameAvailability(props, username)
 			render.JSON(w, http.StatusOK, result)
 		})
@@ -78,8 +73,6 @@ func user(props *Props) {
 		r.Post("/checkCode", func(w http.ResponseWriter, r *http.Request) {
 			var data Auth
 			decoder.Decode(r, &data)
-
-			fmt.Print(data)
 
 			if err := auth.CheckCode(props, data.ID, data.Code, w); err != nil {
 				render.JSON(w, http.StatusUnauthorized, map[string]string{"error": err.Error()})
