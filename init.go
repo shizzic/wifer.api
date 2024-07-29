@@ -17,12 +17,12 @@ import (
 )
 
 var (
-	ctx  = context.TODO()
-	conf = get_config()
-	r    = chi.NewRouter()
+	ctx    = context.TODO()
+	conf   = get_config()
+	router = chi.NewRouter()
 )
 
-// init is invoked before main()
+// init срабатывает перед main()
 func init() {
 	update.ResetOnlineForUsers(&props)
 	setup_middlewares()
@@ -71,7 +71,7 @@ func get_config() *Config {
 }
 
 func setup_middlewares() {
-	r.Use(
+	router.Use(
 		// middleware.Logger,
 		middleware.RedirectSlashes,
 		middleware.Recoverer,
@@ -80,7 +80,12 @@ func setup_middlewares() {
 	)
 }
 
-// Run both: http and https servers
 func run() {
-	http.ListenAndServe(conf.SERVER_IP+":80", r)
+	switch os := runtime.GOOS; os {
+	case "windows":
+		http.ListenAndServe(conf.SERVER_IP+":80", router)
+	default:
+		go http.ListenAndServe(":80", http.HandlerFunc(middlewares.Redirect))
+		http.ListenAndServeTLS(":443", "cert.pem", "key.pem", router)
+	}
 }

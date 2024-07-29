@@ -36,10 +36,17 @@ func Auth(props *Props) func(next http.Handler) http.Handler {
 func SetCORS(conf *structs.Config) func(next http.Handler) http.Handler {
 	return cors.Handler(cors.Options{
 		AllowedOrigins:   []string{conf.CLIENT_DOMAIN},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodPatch, http.MethodOptions},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	})
+}
+
+// http to https всегда. Только для Linux
+func Redirect(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r,
+		"https://"+r.Host+r.URL.String(),
+		http.StatusMovedPermanently)
 }

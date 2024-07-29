@@ -9,7 +9,7 @@ var props = Props{
 	Conf: conf,
 	Ctx:  ctx,
 	DB:   DB,
-	R:    r,
+	R:    router,
 }
 
 type Props = structs.Props
