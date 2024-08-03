@@ -95,5 +95,5 @@ func ActivateOneTimeTrial(props *structs.Props, w http.ResponseWriter, id int) (
 		return expires, nil
 	}
 
-	return 0, errors.New("0")
+	return 0, errors.New("activated_before")
 }

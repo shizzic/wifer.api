@@ -18,49 +18,49 @@ type User = structs.User
 
 func Change(props *Props, r *http.Request, w http.ResponseWriter, data *User, id int) error {
 	if !auth.IsUsernameValid(data.Username) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsAboutValid(data.About) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsTitleValid(data.Title) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsSexValid(data.Sex) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsAgeValid(data.Age) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsHeightValid(data.Height) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsWeightValid(data.Weight) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsSmokeValid(data.Smokes) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsDrinkValid(data.Drinks) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsEthnicityValid(data.Ethnicity) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsBodyValid(data.Body) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsIncomeValid(data.Income) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsIndustryValid(data.Industry) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsPreferValid(data.Prefer) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 	if !auth.IsChildrenValid(data.Children) {
-		return errors.New("0")
+		return errors.New("validation_failed")
 	}
 
 	data.Username = strings.TrimSpace(data.Username)
@@ -70,7 +70,7 @@ func Change(props *Props, r *http.Request, w http.ResponseWriter, data *User, id
 	oldUsername, _ := r.Cookie("username")
 	if oldUsername.Value != data.Username {
 		if available := isUsernameAvailable(props, data.Username); !available {
-			return errors.New("1")
+			return errors.New("username_already_in_use")
 		}
 	}
 
@@ -100,7 +100,7 @@ func Change(props *Props, r *http.Request, w http.ResponseWriter, data *User, id
 		{Key: "$set", Value: bson.D{{Key: "country_id", Value: data.Country}}},
 		{Key: "$set", Value: bson.D{{Key: "city_id", Value: data.City}}},
 	}); err != nil {
-		return errors.New("2")
+		return errors.New("update_was_not_performed")
 	}
 
 	strID := strconv.Itoa(id)

@@ -15,7 +15,7 @@ import (
 // И вход, и регистрация
 func Signin(props *auth.Props, w http.ResponseWriter, email string, isApi bool) (int, error) {
 	if !auth.IsEmailValid(email) {
-		return 0, errors.New("1")
+		return 0, errors.New("email_invalid")
 	}
 
 	code := auth.MakeCode()
@@ -73,7 +73,7 @@ func Signin(props *auth.Props, w http.ResponseWriter, email string, isApi bool) 
 		})
 
 		if err != nil {
-			return 0, errors.New("3")
+			return 0, errors.New("something_went_wrong")
 		}
 
 		if isApi {
@@ -87,16 +87,16 @@ func Signin(props *auth.Props, w http.ResponseWriter, email string, isApi bool) 
 			}); err != nil {
 				// Delete new user, because code wasn't added
 				props.DB["users"].DeleteOne(props.Ctx, bson.M{"_id": int(ObjectId.InsertedID.(int32))})
-				return 0, errors.New("3")
+				return 0, errors.New("something_went_wrong")
 			}
 
 			if err := mail.SendCode(props, email, code, strconv.Itoa(int(ObjectId.InsertedID.(int32)))); err != nil {
-				return 0, errors.New("2")
+				return 0, errors.New("email_not_dispatched")
 			}
 		}
 	} else {
 		if !user["status"].(bool) {
-			return 0, errors.New("4")
+			return 0, errors.New("user_is_banned")
 		}
 
 		if !user["active"].(bool) {
@@ -114,7 +114,7 @@ func Signin(props *auth.Props, w http.ResponseWriter, email string, isApi bool) 
 			})
 
 			if err := mail.SendCode(props, email, code, strconv.Itoa(int(user["_id"].(int32)))); err != nil {
-				return 0, errors.New("2")
+				return 0, errors.New("email_not_dispatched")
 			}
 		}
 	}

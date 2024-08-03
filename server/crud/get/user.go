@@ -61,7 +61,7 @@ func Profile(id int, props *structs.Props) (bson.M, error) {
 	})
 
 	if err := props.DB["users"].FindOne(props.Ctx, bson.M{"_id": id, "status": true}, opts).Decode(&user); err != nil {
-		return user, errors.New("0")
+		return user, errors.New("no_such_user_or_banned")
 	}
 
 	return user, nil

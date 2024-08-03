@@ -26,14 +26,14 @@ func MakeCode() string {
 // Проверить код для валидации
 func CheckCode(props *Props, id int, code string, w http.ResponseWriter) error {
 	if !isCode(code) {
-		return errors.New("0")
+		return errors.New("invalid_code")
 	}
 
 	var data bson.M
 	opts := options.FindOne().SetProjection(bson.M{"_id": 1})
 
 	if err := props.DB["ensure"].FindOne(props.Ctx, bson.M{"_id": id, "code": code}, opts).Decode(&data); err != nil {
-		return errors.New("1")
+		return errors.New("code_not_found")
 	}
 
 	// Delete document in ensure collection, if given code was valid
@@ -43,7 +43,7 @@ func CheckCode(props *Props, id int, code string, w http.ResponseWriter) error {
 	opt := options.FindOne().SetProjection(bson.M{"username": 1})
 
 	if err := props.DB["users"].FindOne(props.Ctx, bson.M{"_id": id}, opt).Decode(&user); err != nil {
-		return errors.New("2")
+		return errors.New("user_not_found")
 	}
 
 	props.DB["users"].UpdateOne(props.Ctx, bson.M{"_id": id}, bson.D{{Key: "$set", Value: bson.D{

@@ -12,7 +12,7 @@ func IsGoogle(id, token string) (string, error) {
 	data, err := idtoken.Validate(context.Background(), token, id)
 
 	if err != nil {
-		return "", errors.New("0")
+		return "", errors.New("wrong_api_token")
 	}
 
 	return data.Claims["email"].(string), nil
@@ -25,7 +25,7 @@ func IsFacebook(id, token string) (string, error) {
 	})
 
 	if err != nil {
-		return "", errors.New("0")
+		return "", errors.New("wrong_api_token")
 	}
 
 	return data["email"].(string), nil
