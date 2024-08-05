@@ -8,8 +8,10 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"wifer/cron"
 	"wifer/server/crud/update"
 	"wifer/server/middlewares"
+	"wifer/server/structs"
 
 	chi "github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -20,10 +22,18 @@ var (
 	ctx    = context.TODO()
 	conf   = get_config()
 	router = chi.NewRouter()
+	props  = structs.Props{
+		Conf: conf,
+		Ctx:  ctx,
+		DB:   DB,
+		R:    router,
+	}
 )
 
 // init срабатывает перед main()
 func init() {
+	os.Setenv("TZ", "Europe/Moscow") // Ставлю Московское время на все приложение
+	cron.Start(&props)
 	update.ResetOnlineForUsers(&props)
 	setup_middlewares()
 }
@@ -41,12 +51,12 @@ func get_env() {
 	}
 }
 
-func get_config() *Config {
+func get_config() *structs.Config {
 	get_env()
 	port, _ := strconv.Atoi(os.Getenv("EMAIL_PORT"))
 	path, _ := filepath.Abs("./")
 
-	return &Config{
+	return &structs.Config{
 		PATH:                    path,
 		MONGO_CONNECTION_STRING: os.Getenv("MONGO_CONNECTION_STRING"),
 
@@ -57,7 +67,7 @@ func get_config() *Config {
 		ENCRYPT_KEY_FILE:  os.Getenv("ENCRYPT_KEY_FILE"),
 
 		ADMIN_EMAIL: os.Getenv("ADMIN_EMAIL"),
-		EMAIL: Email{
+		EMAIL: structs.Email{
 			HOST:     os.Getenv("EMAIL_HOST"),
 			USERNAME: os.Getenv("EMAIL_USERNAME"),
 			PASSWORD: os.Getenv("EMAIL_PASSWORD"),

@@ -28,8 +28,8 @@ go.work.sum
 idea/
 wifer
 
-/cron_dump/*
-!cron_dump/.gitkeep
+# Игнорирую весь мусор связанные с крон-командами
+/cron/dump/trash/*
 
 # Не чекать фотки
 /images
