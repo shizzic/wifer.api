@@ -24,12 +24,9 @@ go.work.sum
 # env file
 .env
 
-# my
-idea/
-wifer
-
 # Игнорирую весь мусор связанные с крон-командами
-/cron/dump/trash/*
+cron/dump/trash/*
+!cron/dump/trash/.gitkeep 
 
 # Не чекать фотки
 /images
