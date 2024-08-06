@@ -32,8 +32,11 @@ var (
 
 // init срабатывает перед main()
 func init() {
-	os.Setenv("TZ", "Europe/Moscow") // Ставлю Московское время на все приложение
-	cron.Start(&props)
+	os := runtime.GOOS
+	if os != "windows" {
+		cron.Start(&props)
+	}
+
 	update.ResetOnlineForUsers(&props)
 	setup_middlewares()
 }

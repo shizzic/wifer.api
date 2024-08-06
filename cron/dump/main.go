@@ -51,7 +51,7 @@ func upload_to_backblaze(props *structs.Props, name string) {
 				content, _ := os.ReadFile(props.Conf.PATH + "/cron/dump/trash/" + name + ".txt")
 				file_id := string(content)
 				file.Close()
-				bucket.DeleteFileVersion(name+".tar.gz", file_id)
+				_, _ = bucket.DeleteFileVersion(name+".tar.gz", file_id)
 			}
 
 			reader, _ := os.Open(props.Conf.PATH + "/cron/dump/trash/" + name + ".tar.gz")
