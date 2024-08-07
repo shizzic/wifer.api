@@ -6,11 +6,13 @@ require (
 	github.com/bas24/googletranslatefree v0.0.0-20231117033553-f5859fe54d30
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
+	github.com/go-co-op/gocron/v2 v2.11.0
 	github.com/google/uuid v1.6.0
-	github.com/huandu/facebook/v2 v2.7.3
 	github.com/jesse0michael/go-request v1.4.0
 	github.com/joho/godotenv v1.5.1
+	github.com/kothar/go-backblaze v0.0.0-20210124194846-35409b867216
 	github.com/lxzan/gws v1.8.5
+	github.com/mholt/archiver/v4 v4.0.0-alpha.8
 	github.com/nickalie/go-webpbin v0.0.0-20220110095747-f10016bf2dc1
 	github.com/unrolled/render v1.6.1
 	github.com/xhit/go-simple-mail/v2 v2.16.0
@@ -32,7 +34,6 @@ require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/go-co-op/gocron/v2 v2.11.0 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-test/deep v1.1.1 // indirect
@@ -49,9 +50,7 @@ require (
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/klauspost/compress v1.17.5 // indirect
 	github.com/klauspost/pgzip v1.2.5 // indirect
-	github.com/kothar/go-backblaze v0.0.0-20210124194846-35409b867216 // indirect
 	github.com/mholt/archiver v3.1.1+incompatible // indirect
-	github.com/mholt/archiver/v4 v4.0.0-alpha.8 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/nickalie/go-binwrapper v0.0.0-20190114141239-525121d43c84 // indirect
 	github.com/nwaples/rardecode v1.1.3 // indirect

@@ -52,7 +52,7 @@ func user(props *Props) {
 
 			// если через api, тогда получаю почту и только затим впускаю/регаю
 			if data.Api {
-				email, err := get.UserEmailByApi(data)
+				email, err := get.UserEmailByApi(props, &data)
 
 				if err != nil {
 					render.JSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})

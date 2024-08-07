@@ -67,12 +67,14 @@ func Profile(id int, props *structs.Props) (bson.M, error) {
 	return user, nil
 }
 
-func UserEmailByApi(data Signin) (email string, err error) {
+func UserEmailByApi(props *structs.Props, data *Signin) (email string, err error) {
 	switch data.Method {
 	case "Google":
 		email, err = auth.IsGoogle(data.ID, data.Token)
-	case "Facebook":
-		email, err = auth.IsFacebook(data.ID, data.Token)
+	case "Yandex":
+		email, err = auth.IsYandex(props, data.Token)
+	case "Mail":
+		email, err = auth.IsMail(props, data)
 	}
 	return
 }

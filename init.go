@@ -80,6 +80,12 @@ func get_config() *structs.Config {
 		BACKBLAZE_ID:  os.Getenv("BACKBLAZE_ID"),
 		BACKBLAZE_KEY: os.Getenv("BACKBLAZE_KEY"),
 		PRODUCT_NAME:  os.Getenv("PRODUCT_NAME"),
+
+		YANDEX_ID:     os.Getenv("YANDEX_ID"),
+		YANDEX_SECRET: os.Getenv("YANDEX_SECRET"),
+
+		MAIL_ID:     os.Getenv("MAIL_ID"),
+		MAIL_SECRET: os.Getenv("MAIL_SECRET"),
 	}
 }
 

@@ -24,6 +24,12 @@ type Config struct {
 	BACKBLAZE_ID  string
 	BACKBLAZE_KEY string
 	PRODUCT_NAME  string
+
+	YANDEX_ID     string
+	YANDEX_SECRET string
+
+	MAIL_ID     string
+	MAIL_SECRET string
 }
 
 type Auth struct {
@@ -133,11 +139,12 @@ type Target struct {
 
 // Структура для регистрации
 type Signin struct {
-	ID     string `json:"id" query:"id"`
-	Token  string `json:"token" query:"token"`
-	Email  string `json:"email" query:"email"`
-	Method string `json:"method" query:"method"`
-	Api    bool   `json:"api" query:"api"`
+	ID       string `json:"id" query:"id"`
+	Token    string `json:"token" query:"token"`
+	Email    string `json:"email" query:"email"`
+	Method   string `json:"method" query:"method"`
+	Redirect string `json:"redirect_uri" query:"redirect_uri"`
+	Api      bool   `json:"api" query:"api"`
 }
 
 // Набор данных для перевода
