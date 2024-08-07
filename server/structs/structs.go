@@ -30,6 +30,12 @@ type Config struct {
 
 	MAIL_ID     string
 	MAIL_SECRET string
+
+	TWITCH_ID     string
+	TWITCH_SECRET string
+
+	VK_ID     string
+	VK_SECRET string
 }
 
 type Auth struct {
@@ -137,13 +143,15 @@ type Target struct {
 	Text   string `json:"text" query:"text"` // Это поле нужно для добавления заметок на лайк
 }
 
-// Структура для регистрации
+// Oauth2, но может использоваться вне данной системы для передачи user_id и тд.
 type Signin struct {
 	ID       string `json:"id" query:"id"`
 	Token    string `json:"token" query:"token"`
 	Email    string `json:"email" query:"email"`
 	Method   string `json:"method" query:"method"`
 	Redirect string `json:"redirect_uri" query:"redirect_uri"`
+	State    string `json:"state" query:"state"`
+	Device   string `json:"device_id" query:"device_id"` // vk oauth
 	Api      bool   `json:"api" query:"api"`
 }
 

@@ -86,6 +86,12 @@ func get_config() *structs.Config {
 
 		MAIL_ID:     os.Getenv("MAIL_ID"),
 		MAIL_SECRET: os.Getenv("MAIL_SECRET"),
+
+		TWITCH_ID:     os.Getenv("TWITCH_ID"),
+		TWITCH_SECRET: os.Getenv("TWITCH_SECRET"),
+
+		VK_ID:     os.Getenv("VK_ID"),
+		VK_SECRET: os.Getenv("VK_SECRET"),
 	}
 }
 
