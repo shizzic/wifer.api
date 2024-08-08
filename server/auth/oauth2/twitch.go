@@ -39,7 +39,7 @@ func IsTwitch(props *structs.Props, data *structs.Signin) (string, error) {
 
 	email, err := validate_twitch_token(props, token)
 	if err != nil {
-		return "", errors.New("wrong_api_token")
+		return "", err
 	}
 	return email, nil
 }
@@ -64,7 +64,7 @@ func validate_twitch_token(props *structs.Props, token string) (string, error) {
 
 	email, err := get_twitch_email(props, ready["user_id"].(string), token)
 	if err != nil {
-		return "", errors.New("wrong_api_token")
+		return "", err
 	}
 
 	return email, nil
@@ -96,9 +96,9 @@ func get_twitch_email(props *structs.Props, user_id, token string) (string, erro
 		if email != nil && auth.IsEmailValid(email.(string)) {
 			return email.(string), nil
 		} else {
-			return "", errors.New("wrong_api_token")
+			return "", errors.New("email_not_verified")
 		}
 	}
 
-	return "", errors.New("wrong_api_token")
+	return "", errors.New("email_not_verified")
 }

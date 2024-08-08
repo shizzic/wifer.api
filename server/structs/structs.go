@@ -39,6 +39,9 @@ type Config struct {
 
 	VK_ID     string
 	VK_SECRET string
+
+	DISCORD_ID     string
+	DISCORD_SECRET string
 }
 
 type Auth struct {

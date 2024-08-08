@@ -39,7 +39,7 @@ func IsYandex(props *structs.Props, code string) (string, error) {
 
 	email, err := get_yandex_email(token)
 	if err != nil {
-		return "", errors.New("wrong_api_token")
+		return "", err
 	}
 	return email, nil
 }
@@ -66,6 +66,6 @@ func get_yandex_email(token string) (string, error) {
 	if email != nil && auth.IsEmailValid(email.(string)) {
 		return email.(string), nil
 	} else {
-		return "", errors.New("wrong_api_token")
+		return "", errors.New("email_not_verified")
 	}
 }

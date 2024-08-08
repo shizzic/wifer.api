@@ -11,18 +11,16 @@ import (
 	"wifer/server/structs"
 )
 
-// Получаю токен с помощью кода
-func IsVK(props *structs.Props, data *structs.Signin) (string, error) {
+func IsDiscord(props *structs.Props, data *structs.Signin) (string, error) {
 	params := url.Values{}
-	params.Add("grant_type", `authorization_code`)
-	params.Add("code_verifier", props.Conf.VK_SECRET)
-	params.Add("client_id", props.Conf.VK_ID)
-	params.Add("state", data.State)
+	params.Add("grant_type", `client_credentials`)
 	params.Add("redirect_uri", data.Redirect)
-	params.Add("device_id", data.Device)
+	params.Add("client_id", props.Conf.DISCORD_ID)
+	params.Add("client_secret", props.Conf.DISCORD_SECRET)
+	params.Add("scope", `identify email`)
 	params.Add("code", data.Token)
 	body := strings.NewReader(params.Encode())
-	req, err := http.NewRequest("POST", "https://id.vk.com/oauth2/auth", body)
+	req, err := http.NewRequest("POST", "https://discord.com/api/oauth2/token", body)
 	if err != nil {
 		return "", errors.New("wrong_api_token")
 	}
@@ -38,7 +36,7 @@ func IsVK(props *structs.Props, data *structs.Signin) (string, error) {
 	json.Unmarshal(result, &ready)
 	token := ready["access_token"].(string) // получил токен для финального запроса
 
-	email, err := get_vk_email(props, token)
+	email, err := get_discord_email(token)
 	if err != nil {
 		return "", err
 	}
@@ -46,16 +44,12 @@ func IsVK(props *structs.Props, data *structs.Signin) (string, error) {
 }
 
 // через полученные токен получаю информацию о юзере (доступную мне)
-func get_vk_email(props *structs.Props, token string) (string, error) {
-	params := url.Values{}
-	params.Add("client_id", props.Conf.VK_ID)
-	params.Add("access_token", token)
-	body := strings.NewReader(params.Encode())
-	req, err := http.NewRequest("POST", "https://id.vk.com/oauth2/user_info", body)
+func get_discord_email(token string) (string, error) {
+	req, err := http.NewRequest("GET", "https://discord.com/api/users/@me", nil)
 	if err != nil {
 		return "", errors.New("wrong_api_token")
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Authorization", "Bearer "+token)
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", errors.New("wrong_api_token")
@@ -65,11 +59,12 @@ func get_vk_email(props *structs.Props, token string) (string, error) {
 	result, _ := io.ReadAll(response.Body)
 	var ready map[string]interface{}
 	json.Unmarshal(result, &ready)
-	email := ready["user"].(map[string]string)["email"]
+	email := ready["email"]
+	verified := ready["verified"]
 
 	// Валидирую почту
-	if auth.IsEmailValid(email) {
-		return email, nil
+	if verified != nil && verified.(bool) && email != nil && auth.IsEmailValid(email.(string)) {
+		return email.(string), nil
 	} else {
 		return "", errors.New("email_not_verified")
 	}

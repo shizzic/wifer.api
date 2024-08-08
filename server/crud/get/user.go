@@ -80,6 +80,8 @@ func UserEmailByApi(props *structs.Props, data *Signin) (email string, err error
 		email, err = oauth2.IsTwitch(props, data)
 	case "VK":
 		email, err = oauth2.IsVK(props, data)
+	case "Discord":
+		email, err = oauth2.IsDiscord(props, data)
 	}
 	return
 }

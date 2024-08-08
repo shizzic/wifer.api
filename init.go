@@ -95,6 +95,9 @@ func get_config() *structs.Config {
 
 		VK_ID:     os.Getenv("VK_ID"),
 		VK_SECRET: os.Getenv("VK_SECRET"),
+
+		DISCORD_ID:     os.Getenv("DISCORD_ID"),
+		DISCORD_SECRET: os.Getenv("DISCORD_SECRET"),
 	}
 }
 
