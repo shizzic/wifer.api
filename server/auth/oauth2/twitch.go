@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"wifer/server/auth"
 	"wifer/server/structs"
 )
 
@@ -86,15 +87,17 @@ func get_twitch_email(props *structs.Props, user_id, token string) (string, erro
 	var ready map[string]any
 	json.Unmarshal(result, &ready)
 	var data []interface{} = ready["data"].([]interface{})
+
+	// Валидирую почту
 	if len(data) == 1 {
 		data := data[0]
 		email := data.(map[string]interface{})["email"]
 
-		if len(email.(string)) == 0 {
+		if email != nil && auth.IsEmailValid(email.(string)) {
+			return email.(string), nil
+		} else {
 			return "", errors.New("wrong_api_token")
 		}
-
-		return email.(string), nil
 	}
 
 	return "", errors.New("wrong_api_token")

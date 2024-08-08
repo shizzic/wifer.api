@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"wifer/server/auth"
 	"wifer/server/structs"
 )
 
@@ -65,5 +66,11 @@ func get_vk_email(props *structs.Props, token string) (string, error) {
 	var ready map[string]interface{}
 	json.Unmarshal(result, &ready)
 	email := ready["user"].(map[string]string)["email"]
-	return email, nil
+
+	// Валидирую почту
+	if auth.IsEmailValid(email) {
+		return email, nil
+	} else {
+		return "", errors.New("wrong_api_token")
+	}
 }

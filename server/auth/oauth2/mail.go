@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"wifer/server/auth"
 	"wifer/server/structs"
 )
 
@@ -52,5 +53,12 @@ func get_mail_email(token string) (string, error) {
 	result, _ := io.ReadAll(response.Body)
 	var ready map[string]any
 	json.Unmarshal(result, &ready)
-	return ready["email"].(string), nil
+	email := ready["email"]
+
+	// Валидирую почту
+	if email != nil && auth.IsEmailValid(email.(string)) {
+		return email.(string), nil
+	} else {
+		return "", errors.New("wrong_api_token")
+	}
 }
