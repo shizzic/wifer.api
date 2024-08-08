@@ -33,7 +33,7 @@ func IsTwitch(props *structs.Props, data *structs.Signin) (string, error) {
 	defer response.Body.Close()
 
 	result, _ := io.ReadAll(response.Body)
-	var ready map[string]any
+	var ready map[string]interface{}
 	json.Unmarshal(result, &ready)
 	token := ready["access_token"].(string)
 
@@ -59,7 +59,7 @@ func validate_twitch_token(props *structs.Props, token string) (string, error) {
 	defer response.Body.Close()
 
 	result, _ := io.ReadAll(response.Body)
-	var ready map[string]any
+	var ready map[string]interface{}
 	json.Unmarshal(result, &ready)
 
 	email, err := get_twitch_email(props, ready["user_id"].(string), token)
@@ -84,7 +84,7 @@ func get_twitch_email(props *structs.Props, user_id, token string) (string, erro
 	defer response.Body.Close()
 
 	result, _ := io.ReadAll(response.Body)
-	var ready map[string]any
+	var ready map[string]interface{}
 	json.Unmarshal(result, &ready)
 	var data []interface{} = ready["data"].([]interface{})
 

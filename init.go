@@ -81,6 +81,9 @@ func get_config() *structs.Config {
 		BACKBLAZE_KEY: os.Getenv("BACKBLAZE_KEY"),
 		PRODUCT_NAME:  os.Getenv("PRODUCT_NAME"),
 
+		GOOGLE_ID:     os.Getenv("GOOGLE_ID"),
+		GOOGLE_SECRET: os.Getenv("GOOGLE_SECRET"),
+
 		YANDEX_ID:     os.Getenv("YANDEX_ID"),
 		YANDEX_SECRET: os.Getenv("YANDEX_SECRET"),
 

@@ -71,7 +71,7 @@ func Profile(id int, props *structs.Props) (bson.M, error) {
 func UserEmailByApi(props *structs.Props, data *Signin) (email string, err error) {
 	switch data.Method {
 	case "Google":
-		email, err = oauth2.IsGoogle(data.ID, data.Token)
+		email, err = oauth2.IsGoogle(props, data)
 	case "Yandex":
 		email, err = oauth2.IsYandex(props, data.Token)
 	case "Mail":

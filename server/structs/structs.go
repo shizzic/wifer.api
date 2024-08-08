@@ -25,6 +25,9 @@ type Config struct {
 	BACKBLAZE_KEY string
 	PRODUCT_NAME  string
 
+	GOOGLE_ID     string
+	GOOGLE_SECRET string
+
 	YANDEX_ID     string
 	YANDEX_SECRET string
 

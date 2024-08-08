@@ -31,7 +31,7 @@ func IsMail(props *structs.Props, data *structs.Signin) (string, error) {
 	defer response.Body.Close()
 
 	result, _ := io.ReadAll(response.Body)
-	var ready map[string]any
+	var ready map[string]interface{}
 	json.Unmarshal(result, &ready)
 	token := ready["access_token"].(string) // получил токен для финального запроса
 
@@ -51,7 +51,7 @@ func get_mail_email(token string) (string, error) {
 	defer response.Body.Close()
 
 	result, _ := io.ReadAll(response.Body)
-	var ready map[string]any
+	var ready map[string]interface{}
 	json.Unmarshal(result, &ready)
 	email := ready["email"]
 
