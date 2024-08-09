@@ -85,7 +85,7 @@ func Signin(props *auth.Props, w http.ResponseWriter, email string, isApi bool) 
 				{Key: "_id", Value: ObjectId.InsertedID},
 				{Key: "code", Value: code},
 			}); err != nil {
-				// Delete new user, because code wasn't added
+				// Удаляю нового юзера, потмоу что код в ensure не добавился по какой то причине
 				props.DB["users"].DeleteOne(props.Ctx, bson.M{"_id": int(ObjectId.InsertedID.(int32))})
 				return 0, errors.New("something_went_wrong")
 			}
