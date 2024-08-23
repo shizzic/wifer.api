@@ -41,11 +41,8 @@ var (
 
 func get_env() {
 	var err error
-	switch os := runtime.GOOS; os {
-	case "windows":
+	if os := runtime.GOOS; os == "windows" {
 		err = godotenv.Load("dev.env")
-	default:
-		err = godotenv.Load("prod.env")
 	}
 	if err != nil {
 		log.Fatal(err)
