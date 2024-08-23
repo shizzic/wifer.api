@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"regexp"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -26,7 +27,13 @@ var (
 )
 
 func connect_to_db() *mongo.Client {
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(conf.MONGO_CONNECTION_STRING))
+	// экранирую @ символ, так как mongodb нужен он
+	str_raw := conf.MONGO_CONNECTION_STRING
+	mode := regexp.MustCompile("^(.*?)@(.*)$")
+	replace := "${1}\\@$2"
+	connect_uri := mode.ReplaceAllString(str_raw, replace)
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(connect_uri))
 	if err != nil {
 		log.Fatal(err)
 	}
