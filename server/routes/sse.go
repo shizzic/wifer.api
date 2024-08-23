@@ -17,7 +17,7 @@ func sse(props *Props) {
 		r.Use(middlewares.Auth(props))
 
 		r.Get("/sse", func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", props.Conf.CLIENT_DOMAIN)
+			w.Header().Set("Access-Control-Allow-Origin", props.Conf.FRONT_END_LINK)
 			w.Header().Set("Access-Control-Expose-Headers", "Content-Type")
 			w.Header().Set("Content-Type", "text/event-stream")
 			w.Header().Set("Cache-Control", "no-cache")

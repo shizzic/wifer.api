@@ -36,10 +36,10 @@ func SendCode(props *Props, to, code, id string) error {
 		SetSubject("Confirm registration")
 
 	msgUUID, _ := uuid.NewRandom()
-	msgID := fmt.Sprintf("<%s@"+props.Conf.SELF_DOMAIN_NAME+">", msgUUID.String())
+	msgID := fmt.Sprintf("<%s@"+props.Conf.SELF_DOMAIN+">", msgUUID.String())
 	email.AddHeader("Message-ID", msgID)
 
-	email.SetBody(mail.TextHTML, "<p><h1>Here is a link to sign into "+props.Conf.PRODUCT_NAME+" :)</h1></p><p><a href=\""+props.Conf.CLIENT_DOMAIN+"/auth/"+id+"/"+code+"\">Enjoy</a></p>")
+	email.SetBody(mail.TextHTML, "<p><h1>Here is a link to sign into "+props.Conf.PRODUCT_NAME+" :)</h1></p><p><a href=\""+props.Conf.FRONT_END_LINK+"/auth/"+id+"/"+code+"\">Enjoy</a></p>")
 	err = email.Send(smtpClient)
 
 	if err != nil {
@@ -73,7 +73,7 @@ func ContactMe(props *Props, data *structs.EmailMessage) error {
 		SetSubject(data.Subject)
 
 	msgUUID, _ := uuid.NewRandom()
-	msgID := fmt.Sprintf("<%s@"+props.Conf.SELF_DOMAIN_NAME+">", msgUUID.String())
+	msgID := fmt.Sprintf("<%s@"+props.Conf.SELF_DOMAIN+">", msgUUID.String())
 	email.AddHeader("Message-ID", msgID)
 
 	email.SetBody(mail.TextHTML, "<p>name: "+data.Name+" - email: "+data.Sender+"</p>"+data.Message)

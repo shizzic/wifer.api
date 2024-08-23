@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
-	"wifer/cron"
-	"wifer/server/crud/update"
 	"wifer/server/middlewares"
 	"wifer/server/structs"
 
@@ -31,23 +29,23 @@ var (
 )
 
 // init срабатывает перед main()
-func init() {
-	os := runtime.GOOS
-	if os != "windows" {
-		cron.Start(&props)
-	}
+// func init() {
+// 	os := runtime.GOOS
+// 	if os != "windows" {
+// 		cron.Start(&props)
+// 	}
 
-	update.ResetOnlineForUsers(&props)
-	setup_middlewares()
-}
+// 	update.ResetOnlineForUsers(&props)
+// 	setup_middlewares()
+// }
 
 func get_env() {
 	var err error
 	switch os := runtime.GOOS; os {
 	case "windows":
-		err = godotenv.Load(".env.development")
+		err = godotenv.Load("dev.env")
 	default:
-		err = godotenv.Load(".env.production")
+		err = godotenv.Load("prod.env")
 	}
 	if err != nil {
 		log.Fatal(err)
@@ -63,11 +61,10 @@ func get_config() *structs.Config {
 		PATH:                    path,
 		MONGO_CONNECTION_STRING: os.Getenv("MONGO_CONNECTION_STRING"),
 
-		SERVER_IP:         os.Getenv("SERVER_IP"),
-		CLIENT_DOMAIN:     os.Getenv("CLIENT_DOMAIN"),
-		SELF_DOMAIN_NAME:  os.Getenv("SELF_DOMAIN_NAME"),
-		ENCRYPT_CERT_FILE: os.Getenv("ENCRYPT_CERT_FILE"),
-		ENCRYPT_KEY_FILE:  os.Getenv("ENCRYPT_KEY_FILE"),
+		FRONT_END_LINK: os.Getenv("FRONT_END_LINK"),
+		SELF_DOMAIN:    os.Getenv("SELF_DOMAIN"),
+		SSL_FULL_CHAIN: os.Getenv("SSL_FULL_CHAIN"),
+		SSL_PRIV_KEY:   os.Getenv("SSL_PRIV_KEY"),
 
 		ADMIN_EMAIL: os.Getenv("ADMIN_EMAIL"),
 		EMAIL: structs.Email{
@@ -114,9 +111,9 @@ func setup_middlewares() {
 func run() {
 	switch os := runtime.GOOS; os {
 	case "windows":
-		http.ListenAndServe(conf.SERVER_IP+":80", router)
+		http.ListenAndServe("127.0.0.1:80", router)
 	default:
-		go http.ListenAndServe(":80", http.HandlerFunc(middlewares.Redirect))
-		http.ListenAndServeTLS(":443", "cert.pem", "key.pem", router)
+		// go http.ListenAndServe(":80", http.HandlerFunc(middlewares.Redirect))
+		http.ListenAndServeTLS(":8443", conf.SSL_FULL_CHAIN, "key.pem", router)
 	}
 }

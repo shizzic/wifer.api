@@ -35,7 +35,7 @@ func Auth(props *Props) func(next http.Handler) http.Handler {
 
 func SetCORS(conf *structs.Config) func(next http.Handler) http.Handler {
 	return cors.Handler(cors.Options{
-		AllowedOrigins:   []string{conf.CLIENT_DOMAIN},
+		AllowedOrigins:   []string{conf.FRONT_END_LINK},
 		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodPatch, http.MethodOptions},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},

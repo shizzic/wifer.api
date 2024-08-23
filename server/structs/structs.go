@@ -11,11 +11,10 @@ import (
 type Config struct {
 	MONGO_CONNECTION_STRING string
 
-	SERVER_IP         string
-	CLIENT_DOMAIN     string
-	SELF_DOMAIN_NAME  string
-	ENCRYPT_CERT_FILE string
-	ENCRYPT_KEY_FILE  string
+	FRONT_END_LINK string
+	SELF_DOMAIN    string
+	SSL_FULL_CHAIN string
+	SSL_PRIV_KEY   string
 
 	ADMIN_EMAIL string
 	EMAIL       Email
