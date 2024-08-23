@@ -34,5 +34,6 @@ func connect_to_db() *mongo.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Print("CONNECTED TO MONGO\n")
 	return client
 }
