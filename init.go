@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"wifer/cron"
+	"wifer/server/crud/update"
 	"wifer/server/middlewares"
 	"wifer/server/structs"
 
@@ -23,29 +25,27 @@ var (
 	props  = structs.Props{
 		Conf: conf,
 		Ctx:  ctx,
-		DB:   DB,
 		R:    router,
 	}
 )
 
 // init срабатывает перед main()
-// func init() {
-// 	os := runtime.GOOS
-// 	if os != "windows" {
-// 		cron.Start(&props)
-// 	}
+func init() {
+	os := runtime.GOOS
+	if os != "windows" {
+		cron.Start(&props)
+	}
 
-// 	update.ResetOnlineForUsers(&props)
-// 	setup_middlewares()
-// }
+	connect_to_db()
+	update.ResetOnlineForUsers(&props)
+	setup_middlewares()
+}
 
 func get_env() {
-	var err error
 	if os := runtime.GOOS; os == "windows" {
-		err = godotenv.Load("dev.env")
-	}
-	if err != nil {
-		log.Fatal(err)
+		if err := godotenv.Load("dev.env"); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 

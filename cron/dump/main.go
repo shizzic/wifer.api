@@ -10,6 +10,14 @@ import (
 	"github.com/mholt/archiver/v4"
 )
 
+func PrepareDB(props *structs.Props) {
+	err := exec.Command("mongodump", props.Conf.MONGO_CONNECTION_STRING, "-d", "db", "-o", props.Conf.PATH+"/cron/dump/trash").Run()
+
+	if err == nil {
+		Start(props, "/cron/dump/trash/db", "db")
+	}
+}
+
 // Длеаю архив по выбранному пути
 func Start(props *structs.Props, from, name string) {
 	// читаю папку фоток для дальнейшей записи
@@ -65,13 +73,5 @@ func upload_to_backblaze(props *structs.Props, name string) {
 			new_file_id.Close()
 			os.RemoveAll(props.Conf.PATH + "/cron/dump/trash/" + name + ".tar.gz")
 		}
-	}
-}
-
-func PrepareDB(props *structs.Props) {
-	err := exec.Command("mongodump", props.Conf.MONGO_CONNECTION_STRING, "-d", "db", "-o", props.Conf.PATH+"/cron/dump/trash").Run()
-
-	if err == nil {
-		Start(props, "/cron/dump/trash/db", "db")
 	}
 }

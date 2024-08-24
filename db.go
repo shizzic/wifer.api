@@ -2,27 +2,12 @@ package main
 
 import (
 	"log"
+	"wifer/mongorestore"
 
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-)
-
-var (
-	mongo_clientent = connect_to_db()
-	DB              = map[string]*mongo.Collection{
-		"users":     mongo_clientent.Database("db").Collection("users"),
-		"ensure":    mongo_clientent.Database("db").Collection("ensure"),
-		"countries": mongo_clientent.Database("db").Collection("countries"),
-		"cities":    mongo_clientent.Database("db").Collection("cities"),
-		"templates": mongo_clientent.Database("db").Collection("templates"),
-		"views":     mongo_clientent.Database("db").Collection("views"),
-		"likes":     mongo_clientent.Database("db").Collection("likes"),
-		"private":   mongo_clientent.Database("db").Collection("private"),
-		"access":    mongo_clientent.Database("db").Collection("access"),
-		"messages":  mongo_clientent.Database("db").Collection("messages"),
-		"visits":    mongo_clientent.Database("db").Collection("visits"),
-		"payments":  mongo_clientent.Database("db").Collection("payments"),
-	}
 )
 
 func connect_to_db() *mongo.Client {
@@ -34,6 +19,26 @@ func connect_to_db() *mongo.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Print("CONNECTED TO MONGO\n")
+
+	// Ставлю бд с облака, если ее не существует (или прямо с папки init_dump в корне проекта, если это локалка и эта папка существует)
+	if dbs, err := client.ListDatabaseNames(ctx, bson.M{"name": primitive.Regex{Pattern: "^db$"}}); err != nil || len(dbs) == 0 {
+		mongorestore.Start(&props)
+	}
+
+	props.DB = map[string]*mongo.Collection{
+		"users":     client.Database("db").Collection("users"),
+		"ensure":    client.Database("db").Collection("ensure"),
+		"countries": client.Database("db").Collection("countries"),
+		"cities":    client.Database("db").Collection("cities"),
+		"templates": client.Database("db").Collection("templates"),
+		"views":     client.Database("db").Collection("views"),
+		"likes":     client.Database("db").Collection("likes"),
+		"private":   client.Database("db").Collection("private"),
+		"access":    client.Database("db").Collection("access"),
+		"messages":  client.Database("db").Collection("messages"),
+		"visits":    client.Database("db").Collection("visits"),
+		"payments":  client.Database("db").Collection("payments"),
+	}
+
 	return client
 }

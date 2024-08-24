@@ -32,6 +32,8 @@ cron/dump/trash/*
 # Не чекать фотки
 /images
 
+/init_dump
+
 .git/
 .env.*
 .bin
