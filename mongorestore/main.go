@@ -46,6 +46,6 @@ func restore(props *structs.Props, destination string) {
 	err := exec.Command("mongorestore", props.Conf.MONGO_CONNECTION_STRING, "-d", "db", props.Conf.PATH+destination).Run()
 
 	if err != nil {
-		log.Fatal("failed to create an init database")
+		log.Fatal(err, "\n", "failed to create an init database")
 	}
 }
