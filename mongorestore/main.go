@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"runtime"
 	"wifer/server/structs"
 
@@ -26,8 +25,7 @@ func Start(props *structs.Props) error {
 
 // реархивировать скаченный dump
 func extract_archive(props *structs.Props, filename string) {
-	path := filepath.Join(filename + ".tar.gz")
-	file, err := os.Open(path)
+	file, err := os.Open(props.Conf.PATH + "/" + filename + ".tar.gz")
 
 	if err != nil {
 		log.Fatal("failed to open database archive")

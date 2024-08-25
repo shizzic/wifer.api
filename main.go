@@ -1,10 +1,12 @@
 package main
 
 import (
-	"wifer/server/routes"
+	"os"
 )
 
 func main() {
-	routes.Declare(&props)
+	os.Create("test.txt")
+	// dump.PrepareDB(&props)
+	// routes.Declare(&props)
 	run()
 }

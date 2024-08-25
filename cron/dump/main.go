@@ -2,7 +2,6 @@ package dump
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/exec"
 	"wifer/server/structs"
@@ -67,8 +66,7 @@ func upload_to_backblaze(props *structs.Props, name string) {
 
 			reader, _ := os.Open(props.Conf.PATH + "/cron/dump/trash/" + name + ".tar.gz")
 			metadata := make(map[string]string)
-			uploaded_file, err := bucket.UploadFile(name+".tar.gz", metadata, reader)
-			fmt.Print(err, "\n")
+			uploaded_file, _ := bucket.UploadFile(name+".tar.gz", metadata, reader)
 			defer reader.Close()
 
 			// удаляю старый файл и создаю вместо него такой же с актуальным ID

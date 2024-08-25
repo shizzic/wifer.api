@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
-	"wifer/cron"
-	"wifer/server/crud/update"
 	"wifer/server/middlewares"
 	"wifer/server/structs"
 
@@ -31,14 +29,14 @@ var (
 
 // init срабатывает перед main()
 func init() {
-	os := runtime.GOOS
-	if os != "windows" {
-		cron.Start(&props)
-	}
+	// os := runtime.GOOS
+	// if os != "windows" {
+	// 	cron.Start(&props)
+	// }
 
-	connect_to_db()
-	update.ResetOnlineForUsers(&props)
-	setup_middlewares()
+	// connect_to_db()
+	// update.ResetOnlineForUsers(&props)
+	// setup_middlewares()
 }
 
 func get_env() {
