@@ -43,7 +43,7 @@ func extract_archive(props *structs.Props, filename string) {
 }
 
 func restore(props *structs.Props, destination string) {
-	cmd := exec.Command("mongorestore", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "-d", "db", props.Conf.PATH+destination)
+	cmd := exec.Command("mongorestore", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "--nsInclude", "db.*", "--drop", props.Conf.PATH+destination)
 	out, err := cmd.CombinedOutput()
 
 	if err != nil {
