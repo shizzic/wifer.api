@@ -25,20 +25,20 @@ func connect_to_db() *mongo.Client {
 		mongorestore.Start(&props)
 	}
 
-	// props.DB = map[string]*mongo.Collection{
-	// 	"users":     client.Database("db").Collection("users"),
-	// 	"ensure":    client.Database("db").Collection("ensure"),
-	// 	"countries": client.Database("db").Collection("countries"),
-	// 	"cities":    client.Database("db").Collection("cities"),
-	// 	"templates": client.Database("db").Collection("templates"),
-	// 	"views":     client.Database("db").Collection("views"),
-	// 	"likes":     client.Database("db").Collection("likes"),
-	// 	"private":   client.Database("db").Collection("private"),
-	// 	"access":    client.Database("db").Collection("access"),
-	// 	"messages":  client.Database("db").Collection("messages"),
-	// 	"visits":    client.Database("db").Collection("visits"),
-	// 	"payments":  client.Database("db").Collection("payments"),
-	// }
+	props.DB = map[string]*mongo.Collection{
+		"users":     client.Database("db").Collection("users"),
+		"ensure":    client.Database("db").Collection("ensure"),
+		"countries": client.Database("db").Collection("countries"),
+		"cities":    client.Database("db").Collection("cities"),
+		"templates": client.Database("db").Collection("templates"),
+		"views":     client.Database("db").Collection("views"),
+		"likes":     client.Database("db").Collection("likes"),
+		"private":   client.Database("db").Collection("private"),
+		"access":    client.Database("db").Collection("access"),
+		"messages":  client.Database("db").Collection("messages"),
+		"visits":    client.Database("db").Collection("visits"),
+		"payments":  client.Database("db").Collection("payments"),
+	}
 
 	return client
 }

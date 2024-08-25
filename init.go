@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"strconv"
 	"wifer/cron"
+	"wifer/server/crud/update"
 	"wifer/server/middlewares"
 	"wifer/server/structs"
 
@@ -36,7 +37,7 @@ func init() {
 	}
 
 	connect_to_db()
-	// update.ResetOnlineForUsers(&props)
+	update.ResetOnlineForUsers(&props)
 	setup_middlewares()
 }
 
