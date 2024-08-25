@@ -25,13 +25,13 @@ func Start(props *structs.Props) error {
 
 // реархивировать скаченный dump
 func extract_archive(props *structs.Props, filename string) {
-	file, err := os.Open(filename + ".tar.gz")
+	file, err := os.Open(props.Conf.PATH + filename + ".tar.gz")
 
 	if err != nil {
 		log.Fatal("failed to open database archive")
 	} else {
-		defer os.RemoveAll(filename + ".tar.gz")
-		defer os.RemoveAll(filename)
+		defer os.RemoveAll(props.Conf.PATH + "/" + filename + ".tar.gz")
+		defer os.RemoveAll(props.Conf.PATH + "/" + filename)
 		defer file.Close()
 
 		if err := extract.Gz(props.Ctx, file, filename, nil); err != nil {

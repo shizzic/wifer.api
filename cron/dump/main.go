@@ -2,6 +2,7 @@ package dump
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 	"wifer/server/structs"
@@ -12,6 +13,8 @@ import (
 
 func PrepareDB(props *structs.Props) {
 	err := exec.Command("mongodump", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "-d", "db", "-o", props.Conf.PATH+"/cron/dump/trash").Run()
+	defer os.RemoveAll(props.Conf.PATH + "/cron/dump/trash/db")
+	defer os.Remove(props.Conf.PATH + "/cron/dump/trash/db.tar.gz")
 
 	if err == nil {
 		Start(props, "/cron/dump/trash/db", "db")
@@ -25,12 +28,12 @@ func Start(props *structs.Props, from, name string) {
 		props.Conf.PATH + from: name,
 	})
 	to, _ := os.Create(props.Conf.PATH + "/cron/dump/trash/" + name + ".tar.gz")
+	defer to.Close()
 	format := archiver.CompressedArchive{
 		Compression: archiver.Gz{},
 		Archival:    archiver.Tar{},
 	}
 	err := format.Archive(context.Background(), to, files)
-	to.Close()
 	if err == nil {
 		upload_to_backblaze(props, name)
 	}
@@ -56,22 +59,23 @@ func upload_to_backblaze(props *structs.Props, name string) {
 		if err == nil {
 			file, err := os.Open(props.Conf.PATH + "/cron/dump/trash/" + name + ".txt")
 			if err == nil {
+				defer file.Close()
 				content, _ := os.ReadFile(props.Conf.PATH + "/cron/dump/trash/" + name + ".txt")
 				file_id := string(content)
-				file.Close()
-				_, _ = bucket.DeleteFileVersion(name+".tar.gz", file_id)
+				bucket.DeleteFileVersion(name+".tar.gz", file_id)
 			}
 
 			reader, _ := os.Open(props.Conf.PATH + "/cron/dump/trash/" + name + ".tar.gz")
 			metadata := make(map[string]string)
-			response, _ := bucket.UploadFile(name+".tar.gz", metadata, reader)
-			reader.Close()
+			uploaded_file, err := bucket.UploadFile(name+".tar.gz", metadata, reader)
+			fmt.Print(err, "\n")
+			defer reader.Close()
 
+			// удаляю старый файл и создаю вместо него такой же с актуальным ID
 			os.Remove(props.Conf.PATH + "/cron/dump/trash/" + name + ".txt")
 			new_file_id, _ := os.Create(props.Conf.PATH + "/cron/dump/trash/" + name + ".txt")
-			new_file_id.WriteString(response.ID)
-			new_file_id.Close()
-			os.RemoveAll(props.Conf.PATH + "/cron/dump/trash/" + name + ".tar.gz")
+			defer new_file_id.Close()
+			new_file_id.WriteString(uploaded_file.ID)
 		}
 	}
 }
