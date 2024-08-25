@@ -43,7 +43,7 @@ func extract_archive(props *structs.Props, filename string) {
 }
 
 func restore(props *structs.Props, destination string) {
-	err := exec.Command("mongorestore", props.Conf.MONGO_CONNECTION_STRING, "-d", "db", props.Conf.PATH+destination).Run()
+	err := exec.Command("mongorestore", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "-d", "db", props.Conf.PATH+destination).Run()
 
 	if err != nil {
 		log.Fatal(err.Error(), "\n", "failed to create an init database")
