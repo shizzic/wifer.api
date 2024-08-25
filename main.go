@@ -1,12 +1,13 @@
 package main
 
 import (
-	"wifer/cron/dump"
 	"wifer/server/routes"
 )
 
+// Путь для os package никогда не должен начинаться с /
+// Единственная причина, почему работает props.Conf.PATH - потому что данная переменная тоже не начинается с / :)
+
 func main() {
-	dump.PrepareDB(&props)
 	routes.Declare(&props)
 	run()
 }
