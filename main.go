@@ -1,10 +1,8 @@
 package main
 
-import "wifer/server/routes"
-
 func main() {
 	// test()
-	routes.Declare(&props)
+	// routes.Declare(&props)
 	run()
 }
 
