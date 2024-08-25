@@ -11,12 +11,12 @@ import (
 )
 
 func PrepareDB(props *structs.Props) {
-	err := exec.Command("mongodump", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "-d", "db", "-o", props.Conf.PATH+"/cron/dump/trash").Run()
-	defer os.RemoveAll(props.Conf.PATH + "/cron/dump/trash/db")
-	defer os.Remove(props.Conf.PATH + "/cron/dump/trash/db.tar.gz")
+	err := exec.Command("mongodump", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "-d", "db", "-o", props.Conf.PATH+"cron/dump/trash").Run()
+	defer os.RemoveAll("cron/dump/trash/db")
+	defer os.Remove("cron/dump/trash/db.tar.gz")
 
 	if err == nil {
-		Start(props, "/cron/dump/trash/db", "db")
+		Start(props, "cron/dump/trash/db", "db")
 	}
 }
 
@@ -26,14 +26,16 @@ func Start(props *structs.Props, from, name string) {
 	files, _ := archiver.FilesFromDisk(nil, map[string]string{
 		props.Conf.PATH + from: name,
 	})
-	to, _ := os.Create(props.Conf.PATH + "/cron/dump/trash/" + name + ".tar.gz")
+
+	to, _ := os.Create("cron/dump/trash/" + name + ".tar.gz")
 	defer to.Close()
+
 	format := archiver.CompressedArchive{
 		Compression: archiver.Gz{},
 		Archival:    archiver.Tar{},
 	}
-	err := format.Archive(context.Background(), to, files)
-	if err == nil {
+
+	if err := format.Archive(context.Background(), to, files); err == nil {
 		upload_to_backblaze(props, name)
 	}
 }
@@ -56,22 +58,22 @@ func upload_to_backblaze(props *structs.Props, name string) {
 		bucket, err := b2.Bucket(bucket_name)
 
 		if err == nil {
-			file, err := os.Open(props.Conf.PATH + "/cron/dump/trash/" + name + ".txt")
+			file, err := os.Open("cron/dump/trash/" + name + ".txt")
 			if err == nil {
 				defer file.Close()
-				content, _ := os.ReadFile(props.Conf.PATH + "/cron/dump/trash/" + name + ".txt")
+				content, _ := os.ReadFile("cron/dump/trash/" + name + ".txt")
 				file_id := string(content)
 				bucket.DeleteFileVersion(name+".tar.gz", file_id)
 			}
 
-			reader, _ := os.Open(props.Conf.PATH + "/cron/dump/trash/" + name + ".tar.gz")
+			reader, _ := os.Open("cron/dump/trash/" + name + ".tar.gz")
 			metadata := make(map[string]string)
 			uploaded_file, _ := bucket.UploadFile(name+".tar.gz", metadata, reader)
 			defer reader.Close()
 
 			// удаляю старый файл и создаю вместо него такой же с актуальным ID
-			os.Remove(props.Conf.PATH + "/cron/dump/trash/" + name + ".txt")
-			new_file_id, _ := os.Create(props.Conf.PATH + "/cron/dump/trash/" + name + ".txt")
+			os.Remove("cron/dump/trash/" + name + ".txt")
+			new_file_id, _ := os.Create("cron/dump/trash/" + name + ".txt")
 			defer new_file_id.Close()
 			new_file_id.WriteString(uploaded_file.ID)
 		}

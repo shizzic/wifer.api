@@ -12,7 +12,7 @@ import (
 
 // Начать процесс создания базы данных, если ее нету по какой то причине
 func Start(props *structs.Props) error {
-	_, err := os.Stat(props.Conf.PATH + "/init_dump")
+	_, err := os.Stat("init_dump")
 
 	if osname := runtime.GOOS; osname == "windows" && err == nil {
 		restore(props, "/init_dump")
@@ -25,13 +25,13 @@ func Start(props *structs.Props) error {
 
 // реархивировать скаченный dump
 func extract_archive(props *structs.Props, filename string) {
-	file, err := os.Open(props.Conf.PATH + "/" + filename + ".tar.gz")
+	file, err := os.Open(filename + ".tar.gz")
 
 	if err != nil {
 		log.Fatal("failed to open database archive")
 	} else {
-		defer os.RemoveAll(props.Conf.PATH + "/" + filename + ".tar.gz")
-		defer os.RemoveAll(props.Conf.PATH + "/" + filename)
+		defer os.RemoveAll(filename + ".tar.gz")
+		defer os.RemoveAll(filename)
 		defer file.Close()
 
 		if err := extract.Gz(props.Ctx, file, filename, nil); err != nil {
