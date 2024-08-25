@@ -11,7 +11,7 @@ import (
 )
 
 func PrepareDB(props *structs.Props) {
-	err := exec.Command("mongodump", props.Conf.MONGO_CONNECTION_STRING, "-d", "db", "-o", props.Conf.PATH+"/cron/dump/trash").Run()
+	err := exec.Command("mongodump", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "-d", "db", "-o", props.Conf.PATH+"/cron/dump/trash").Run()
 
 	if err == nil {
 		Start(props, "/cron/dump/trash/db", "db")

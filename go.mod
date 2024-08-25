@@ -38,21 +38,18 @@ require (
 	github.com/h2non/filetype v1.1.3 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/jessevdk/go-flags v1.5.0 // indirect
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5 // indirect
 	github.com/juju/loggo v1.0.0 // indirect
 	github.com/klauspost/compress v1.17.8 // indirect
 	github.com/klauspost/pgzip v1.2.5 // indirect
 	github.com/mholt/archiver v3.1.1+incompatible // indirect
-	github.com/mongodb/mongo-tools v0.0.0-20240808212544-0fe8aa034b51 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/nickalie/go-binwrapper v0.0.0-20190114141239-525121d43c84 // indirect
 	github.com/nwaples/rardecode v1.1.3 // indirect
 	github.com/nwaples/rardecode/v2 v2.0.0-beta.2 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/therootcompany/xz v1.0.1 // indirect
@@ -68,7 +65,6 @@ require (
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
-	golang.org/x/term v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
