@@ -109,6 +109,6 @@ func run() {
 		http.ListenAndServe("127.0.0.1:80", router)
 	default:
 		// go http.ListenAndServe(":80", http.HandlerFunc(middlewares.Redirect))
-		http.ListenAndServeTLS(":8443", conf.SSL_FULL_CHAIN, "key.pem", router)
+		http.ListenAndServeTLS(":8443", conf.SSL_FULL_CHAIN, conf.SSL_PRIV_KEY, router)
 	}
 }
