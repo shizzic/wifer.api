@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"wifer/cron"
+	"wifer/server/crud/update"
 	"wifer/server/middlewares"
 	"wifer/server/structs"
 
@@ -30,14 +31,14 @@ var (
 
 // init срабатывает перед main()
 func init() {
-	// os := runtime.GOOS
-	// if os != "windows" {
-	// 	cron.Start(&props)
-	// }
+	os := runtime.GOOS
+	if os != "windows" {
+		cron.Start(&props)
+	}
 
-	// connect_to_db()
-	// update.ResetOnlineForUsers(&props)
-	// setup_middlewares()
+	connect_to_db()
+	update.ResetOnlineForUsers(&props)
+	setup_middlewares()
 }
 
 func get_env() {
@@ -110,7 +111,6 @@ func run() {
 		http.ListenAndServe("127.0.0.1:80", router)
 	default:
 		// go http.ListenAndServe(":80", http.HandlerFunc(middlewares.Redirect))
-		err := http.ListenAndServeTLS(":8443", conf.SSL_FULL_CHAIN, conf.SSL_PRIV_KEY, router)
-		fmt.Print(err)
+		http.ListenAndServeTLS(":8443", conf.SSL_FULL_CHAIN, conf.SSL_PRIV_KEY, router)
 	}
 }
