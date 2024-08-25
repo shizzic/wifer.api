@@ -36,8 +36,8 @@ func download_backblaze_dump(props *structs.Props, osname string) {
 					log.Fatal("failed to download database")
 				} else {
 					// удаляю старый файл и создаю вместо него такой же с актуальным ID
-					os.Remove("cron/dump/trash/db.txt")
-					new_file_id, _ := os.Create("cron/dump/trash/db.txt")
+					os.Remove(props.Conf.PATH + "/cron/dump/trash/db.txt")
+					new_file_id, _ := os.Create(props.Conf.PATH + "/cron/dump/trash/db.txt")
 					defer new_file_id.Close()
 					new_file_id.WriteString(file.ID)
 
@@ -48,7 +48,7 @@ func download_backblaze_dump(props *structs.Props, osname string) {
 					if _, err := buf.ReadFrom(reader); err != nil {
 						log.Fatal("could not read file into bytes from backblaze")
 					} else {
-						if err := os.WriteFile(filename+".tar.gz", buf.Bytes(), 0755); err != nil {
+						if err := os.WriteFile(props.Conf.PATH+"/"+filename+".tar.gz", buf.Bytes(), 0755); err != nil {
 							log.Fatal("failed to save downloaded dump")
 						} else {
 							extract_archive(props, filename)
