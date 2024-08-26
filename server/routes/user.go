@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 	"wifer/server/auth"
 	"wifer/server/crud/create"
@@ -18,7 +19,9 @@ func user(props *Props) {
 	props.R.Group(func(r chi.Router) {
 		r.Get("/profile", func(w http.ResponseWriter, r *http.Request) {
 			var data User
-			decoder.Decode(r, &data)
+			id, _ := strconv.Atoi(r.URL.Query().Get("id"))
+			data.ID = id
+			// decoder.Decode(r, &data)
 
 			target := get.TargetProfileActions(data.ID, w, r, props)
 			if user, err := get.Profile(data.ID, props); err != nil {
