@@ -9,20 +9,17 @@ import (
 	"wifer/server/crud/update"
 	"wifer/server/structs"
 
-	unrolled "github.com/unrolled/render"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Signin = structs.Signin
 
-var render = unrolled.New()
-
 // Получаем id пользователя из куки, для авторизации
 func UserID(w http.ResponseWriter, r *http.Request, props *structs.Props) (result int) {
 	id, err := r.Cookie("id")
 	if err != nil {
-		render.JSON(w, http.StatusNotFound, map[string]string{"error": err.Error()})
+		return
 	}
 
 	result, _ = strconv.Atoi(id.Value)
