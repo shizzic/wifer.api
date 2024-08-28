@@ -31,11 +31,7 @@ var (
 
 // init срабатывает перед main()
 func init() {
-	os := runtime.GOOS
-	if os != "windows" {
-		cron.Start(&props)
-	}
-
+	go cron.Start(&props) // cron works for windows too
 	connect_to_db()
 	update.ResetOnlineForUsers(&props)
 	setup_middlewares()

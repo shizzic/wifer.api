@@ -43,4 +43,5 @@ func Start(props *structs.Props) {
 	)
 
 	cron.Start()
+	select {}
 }
