@@ -1,1 +1,2 @@
-Почти все
+To up the server:
+```go run .```
