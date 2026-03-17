@@ -23,38 +23,57 @@ func Start(props *structs.Props) error {
 	return nil
 }
 
-// реархивировать скаченный dump
 func extract_archive(props *structs.Props, filename string) {
-	file, err := os.Open(props.Conf.PATH + "/" + filename + ".tar.gz")
+	archivePath := props.Conf.PATH + "/" + filename + ".tar.gz"
+	log.Println("=== EXTRACT DEBUG ===")
+	log.Println("Archive path:", archivePath)
 
+	file, err := os.Open(archivePath)
 	if err != nil {
-		log.Fatal("failed to open database archive")
+		log.Fatal("failed to open database archive: ", err)
 	} else {
-		defer os.RemoveAll(props.Conf.PATH + "/" + filename + ".tar.gz")
+		info, _ := file.Stat()
+		log.Println("Archive size:", info.Size(), "bytes")
+
+		defer os.RemoveAll(archivePath)
 		defer os.RemoveAll(props.Conf.PATH + "/" + filename)
 		defer file.Close()
 
-		if err := extract.Gz(props.Ctx, file, props.Conf.PATH+"/"+filename, nil); err != nil {
-			log.Fatal("failed to extract database archive")
+		extractPath := props.Conf.PATH + "/" + filename
+		log.Println("Extracting to:", extractPath)
+
+		if err := extract.Gz(props.Ctx, file, extractPath, nil); err != nil {
+			log.Fatal("failed to extract database archive: ", err)
 		} else {
+			log.Println("Extraction complete")
+
 			path := props.Conf.PATH + "/" + filename + "/" + filename
-			entries, err := os.ReadDir(path)
-			log.Println("Path:", path, "Error:", err)
+			entries, readErr := os.ReadDir(path)
+			log.Println("Restore path:", path)
+			log.Println("ReadDir error:", readErr)
 			for _, e := range entries {
 				info, _ := e.Info()
-				log.Println(e.Name(), info.Size())
+				log.Println(e.Name(), info.Size(), "bytes")
 			}
-			
+			log.Println("=====================")
+
 			restore(props, "/"+filename+"/"+filename)
 		}
 	}
 }
 
 func restore(props *structs.Props, destination string) {
-	cmd := exec.Command("mongorestore", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "--nsInclude", "db.*", "--drop", props.Conf.PATH+destination)
+	fullPath := props.Conf.PATH + destination
+	log.Println("=== MONGORESTORE DEBUG ===")
+	log.Println("Full restore path:", fullPath)
+	log.Println("Connection string:", props.Conf.MONGO_CONNECTION_STRING)
+
+	cmd := exec.Command("mongorestore", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "--nsInclude", "db.*", "--drop", fullPath)
 	out, err := cmd.CombinedOutput()
+	log.Println("Mongorestore output:", string(out))
+	log.Println("==========================")
 
 	if err != nil {
-		log.Fatal("failed to create an init database\n", err, "\n", out, "\n")
+		log.Fatal("failed to create an init database\n", err, "\n", string(out), "\n")
 	}
 }
