@@ -13,11 +13,11 @@ func Visit(props *Props) {
 
 	count, ok := data["count"].(int32)
 	if !ok {
-    	count = 0
+		count = 0
 	}
 
 	props.DB["visits"].UpdateOne(props.Ctx, bson.M{"_id": 1}, bson.D{
-    	{Key: "$set", Value: bson.D{{Key: "count", Value: count + 1}}},
+		{Key: "$set", Value: bson.D{{Key: "count", Value: count + 1}}},
 	})
 }
 

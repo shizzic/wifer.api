@@ -45,22 +45,14 @@ func extract_archive(props *structs.Props, filename string) {
 		if err := extract.Gz(props.Ctx, file, extractPath, nil); err != nil {
 			log.Fatal("failed to extract database archive: ", err)
 		} else {
-			log.Println("Extraction complete")
 			restore(props, "/"+filename+"/init_dump")
 		}
 	}
 }
 
 func restore(props *structs.Props, destination string) {
-	fullPath := props.Conf.PATH + destination
-	log.Println("=== MONGORESTORE DEBUG ===")
-	log.Println("Full restore path:", fullPath)
-	log.Println("Connection string:", props.Conf.MONGO_CONNECTION_STRING)
-
 	cmd := exec.Command("mongorestore", "--uri="+props.Conf.MONGO_CONNECTION_STRING, "--nsInclude", "db.*", "--drop", fullPath)
 	out, err := cmd.CombinedOutput()
-	log.Println("Mongorestore output:", string(out))
-	log.Println("==========================")
 
 	if err != nil {
 		log.Fatal("failed to create an init database\n", err, "\n", string(out), "\n")
