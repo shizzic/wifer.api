@@ -11,8 +11,13 @@ func Visit(props *Props) {
 	opts := options.FindOne().SetProjection(bson.M{"count": 1})
 	props.DB["visits"].FindOne(props.Ctx, bson.M{"_id": 1}, opts).Decode(&data)
 
+	count, ok := data["count"].(int32)
+	if !ok {
+		count = 0
+	}
+
 	props.DB["visits"].UpdateOne(props.Ctx, bson.M{"_id": 1}, bson.D{
-		{Key: "$set", Value: bson.D{{Key: "count", Value: data["count"].(int32) + 1}}},
+		{Key: "$set", Value: bson.D{{Key: "count", Value: count + 1}}},
 	})
 }
 
