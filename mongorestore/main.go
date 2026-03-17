@@ -34,7 +34,7 @@ func extract_archive(props *structs.Props, filename string) {
 		defer os.RemoveAll(props.Conf.PATH + "/" + filename)
 		defer file.Close()
 
-		if err := extract.Gz(props.Ctx, file, filename, nil); err != nil {
+		if err := extract.Gz(props.Ctx, file, props.Conf.PATH+"/"+filename, nil); err != nil {
 			log.Fatal("failed to extract database archive")
 		} else {
 			restore(props, "/"+filename+"/"+filename)
