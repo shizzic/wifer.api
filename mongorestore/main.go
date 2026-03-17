@@ -46,16 +46,7 @@ func extract_archive(props *structs.Props, filename string) {
 			log.Fatal("failed to extract database archive: ", err)
 		} else {
 			log.Println("Extraction complete")
-
-			// try nested path first, fallback to flat
-			nestedPath := extractPath + "/" + filename
-			if _, err := os.Stat(nestedPath); err == nil {
-				log.Println("Using nested path:", nestedPath)
-				restore(props, "/"+filename+"/"+filename)
-			} else {
-				log.Println("Using flat path:", extractPath)
-				restore(props, "/"+filename)
-			}
+			restore(props, "/"+filename+"/init_dump")
 		}
 	}
 }
