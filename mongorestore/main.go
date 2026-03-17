@@ -47,17 +47,15 @@ func extract_archive(props *structs.Props, filename string) {
 		} else {
 			log.Println("Extraction complete")
 
-			path := props.Conf.PATH + "/" + filename + "/" + filename
-			entries, readErr := os.ReadDir(path)
-			log.Println("Restore path:", path)
-			log.Println("ReadDir error:", readErr)
-			for _, e := range entries {
-				info, _ := e.Info()
-				log.Println(e.Name(), info.Size(), "bytes")
+			// try nested path first, fallback to flat
+			nestedPath := extractPath + "/" + filename
+			if _, err := os.Stat(nestedPath); err == nil {
+				log.Println("Using nested path:", nestedPath)
+				restore(props, "/"+filename+"/"+filename)
+			} else {
+				log.Println("Using flat path:", extractPath)
+				restore(props, "/"+filename)
 			}
-			log.Println("=====================")
-
-			restore(props, "/"+filename+"/"+filename)
 		}
 	}
 }
