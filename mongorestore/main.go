@@ -45,7 +45,7 @@ func extract_archive(props *structs.Props, filename string) {
 		if err := extract.Gz(props.Ctx, file, extractPath, nil); err != nil {
 			log.Fatal("failed to extract database archive: ", err)
 		} else {
-			restore(props, "/"+filename+"/init_dump")
+			restore(props, "/"+filename + "/" + filename)
 		}
 	}
 }
