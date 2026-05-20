@@ -24,7 +24,7 @@ func PrepareDB(props *structs.Props) {
 func Start(props *structs.Props, from, name string) {
 	// читаю папку фоток для дальнейшей записи
 	files, _ := archiver.FilesFromDisk(nil, map[string]string{
-		props.Conf.PATH + from: name,
+		props.Conf.PATH + from: name + "/" + name,
 	})
 
 	to, _ := os.Create(props.Conf.PATH + "/cron/dump/trash/" + name + ".tar.gz")
